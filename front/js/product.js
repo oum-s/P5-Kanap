@@ -1,8 +1,10 @@
 console.log('hey, you');
+let produitData = [];
 const App = {
   init : function(){
-    console.log("app.init activé");
-    App.getOneProduct();
+         console.log("app.init activé");
+         App.getOneProduct();
+         App.addProductCart();
   },
   // Afficher toutes les API
 getOneProduct : function(){
@@ -51,14 +53,49 @@ displayOneProduct : function(products){
       oneProducteltContent.querySelector('#price').textContent = product.price;
       // ajoute le tout à son parent
       document.querySelector('.item').appendChild(cloneTemplateOneProductElt);
+      // pour le cart
+      // essayer de le placer ailleurs
+      productList = {
+        theId : product._id, 
+        theImage : product.imageUrl,
+        theName : product.name,
+        theColor : product.colors,
+        thePrice : product.price,
+      }
+
     }else{
       console.log('erreureuh');
     }
   }
   );
+  App.addProductCart(productList);
 },
 
+addProductCart : function(){
+  // selectionner le bouton d'envoie
+  let button = document.querySelector('#addToCart');
+  // onclick on envoie les infos nécessaire au localstorage
+  button.addEventListener("click", () => {
+    // 
+    let productArray = JSON.parse(localStorage.getItem('product'))
+    console.log(productArray);
+    let select = document.getElementById('colors');
+    let quantityInput = document.querySelector('#quantity');
 
+    const fusionProductColor = Object.assign({}, productList, {
+      theColor : `${select.value}`,
+      quantity : `${quantityInput.value}`
+    });
+    console.log(fusionProductColor);
+
+    if(productArray == null){
+      productArray = [];
+      productArray.push(productList);
+      console.log(productList);
+      localStorage.setItem('product', JSON.stringify(productArray));
+    }
+  })
+}
 }
 // appeler toutes les functions
 document.addEventListener('DOMContentLoaded', App.init);
