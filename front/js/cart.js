@@ -1,9 +1,8 @@
-console.log('salut!');
 const App = {
   init : function(){
-    App.getOneProduct();
+    App.displayCart();
   },
-  getOneProduct : function(){
+  /* getOneProduct : function(){
     return(
       fetch(`http://localhost:3000/api/products`)
       .then(function(res) {
@@ -22,9 +21,15 @@ const App = {
         console.log(err);
       })
     );
-  },
+  }, */
   displayCart : function(){
-    
+    console.log('hey cart!');
+    let addProduct = JSON.parse(localStorage.getItem('product'));
+    if (addProduct) {
+      return addProduct;
+      console.log(addProduct);
+      
+    }
   }
 }
 //  l'info du produit en tant que parametre 

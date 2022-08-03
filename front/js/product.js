@@ -1,10 +1,21 @@
 console.log('hey, you');
 let produitData = [];
-const App = {
+const Appli = {
   init : function(){
-         console.log("app.init activé");
-         App.getOneProduct();
-         App.addProductCart();
+         console.log("Appli.init activé");
+         
+         Appli.getOneProduct();
+         Appli.addProductCart();
+         // pour le cart
+      // essayer de le placer ailleurs
+      productList = {
+        theId : product._id, 
+        theImage : product.imageUrl,
+        theName : product.name,
+        theColor : product.colors,
+        thePrice : product.price,
+      }
+      Appli.addProductCart(productList);
   },
   // Afficher toutes les API
 getOneProduct : function(){
@@ -20,7 +31,7 @@ getOneProduct : function(){
     .then(function(products) {
       //  nous le retournons et récupérons sa vraie valeur
       console.log('ca marche');
-      App.displayOneProduct(products);
+      Appli.displayOneProduct(products);
     })
     .catch(function(err) {
       console.log(err);
@@ -53,22 +64,12 @@ displayOneProduct : function(products){
       oneProducteltContent.querySelector('#price').textContent = product.price;
       // ajoute le tout à son parent
       document.querySelector('.item').appendChild(cloneTemplateOneProductElt);
-      // pour le cart
-      // essayer de le placer ailleurs
-      productList = {
-        theId : product._id, 
-        theImage : product.imageUrl,
-        theName : product.name,
-        theColor : product.colors,
-        thePrice : product.price,
-      }
-
     }else{
       console.log('erreureuh');
     }
   }
   );
-  App.addProductCart(productList);
+  
 },
 
 addProductCart : function(){
@@ -86,7 +87,9 @@ addProductCart : function(){
       theColor : `${select.value}`,
       quantity : `${quantityInput.value}`
     });
+    
     console.log(fusionProductColor);
+    console.log(productList);
 
     if(productArray == null){
       productArray = [];
@@ -97,5 +100,5 @@ addProductCart : function(){
   })
 }
 }
-// appeler toutes les functions
-document.addEventListener('DOMContentLoaded', App.init);
+// Applieler toutes les functions
+document.addEventListener('DOMContentLoaded', Appli.init);
