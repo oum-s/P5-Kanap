@@ -1,10 +1,9 @@
 console.log('hey, you');
-let produitData = [];
-const App = {
+let productList = {};
+const Appl = {
   init : function(){
-         console.log("app.init activé");
-         App.getOneProduct();
-         App.addProductCart();
+         console.log("Appl.init activé");
+         Appl.getOneProduct();
   },
   // Afficher toutes les API
 getOneProduct : function(){
@@ -20,7 +19,8 @@ getOneProduct : function(){
     .then(function(products) {
       //  nous le retournons et récupérons sa vraie valeur
       console.log('ca marche');
-      App.displayOneProduct(products);
+      Appl.displayOneProduct(products);
+      Appl.addProductCart(products);
     })
     .catch(function(err) {
       console.log(err);
@@ -45,6 +45,7 @@ displayOneProduct : function(products){
       const cloneTemplateOneProductElt = document.importNode(templateOneProductElt.content, true) ;
       // Met le contenue de la template ds balise article
       const oneProducteltContent = cloneTemplateOneProductElt.querySelector('article');
+      console.log(oneProducteltContent);
       // seectionne l'img de l'article et lui rajoute la valeur de l'api
       oneProducteltContent.querySelector('img').src = product.imageUrl;
       oneProducteltContent.querySelector('img').alt = product.altTxt;
@@ -53,7 +54,26 @@ displayOneProduct : function(products){
       oneProducteltContent.querySelector('#price').textContent = product.price;
       // ajoute le tout à son parent
       document.querySelector('.item').appendChild(cloneTemplateOneProductElt);
-      // pour le cart
+      
+
+    }else{
+      console.log('erreureuh');
+    }
+  }
+  );
+},
+
+addProductCart : function(products){
+  // selectionner les éléments nécessaires
+  const queryStringUlrId = window.location.search;
+  const urlSearchParams = new URLSearchParams(queryStringUlrId);
+  let button = document.querySelector('#addToCart');
+  let select = document.getElementById('colors');
+  let quantityInput = document.querySelector('#quantity'); 
+  // foreach pour récupérer l'id de l'url et selectionner les éléments de l'api pour le tableau
+  products.forEach(product => {
+    if( urlSearchParams.get('id') === product._id){
+      console.log('ok panier');
       // essayer de le placer ailleurs
       productList = {
         theId : product._id, 
@@ -61,41 +81,29 @@ displayOneProduct : function(products){
         theName : product.name,
         theColor : product.colors,
         thePrice : product.price,
-      }
-
-    }else{
-      console.log('erreureuh');
-    }
-  }
-  );
-  App.addProductCart(productList);
-},
-
-addProductCart : function(){
-  // selectionner le bouton d'envoie
-  let button = document.querySelector('#addToCart');
+          }
+      
+        }else{
+        console.log('no panier')
+      };
+    });
   // onclick on envoie les infos nécessaire au localstorage
   button.addEventListener("click", () => {
-    // 
-    let productArray = JSON.parse(localStorage.getItem('product'))
+   const newProductList = Object.assign({}, productList, {
+    theColor : `${select.value}`,
+    theQuantity : `${quantityInput.value}`
+  });
+  localStorage.setItem('product', JSON.stringify(newProductList));
+  let productArray = JSON.parse(localStorage.getItem('product'));
     console.log(productArray);
-    let select = document.getElementById('colors');
-    let quantityInput = document.querySelector('#quantity');
-
-    const fusionProductColor = Object.assign({}, productList, {
-      theColor : `${select.value}`,
-      quantity : `${quantityInput.value}`
-    });
-    console.log(fusionProductColor);
-
-    if(productArray == null){
+    /* if(productArray == null){
       productArray = [];
       productArray.push(productList);
       console.log(productList);
       localStorage.setItem('product', JSON.stringify(productArray));
-    }
+    } */ 
   })
 }
 }
 // appeler toutes les functions
-document.addEventListener('DOMContentLoaded', App.init);
+document.addEventListener('DOMContentLoaded', Appl.init);
