@@ -88,21 +88,34 @@ addProductCart : function(products){
       };
     });
   // onclick on envoie les infos nécessaire au localstorage
-  button.addEventListener("click", () => {
+  button.addEventListener("click", (e) => {
+    e.preventDefault();
+    // faire une fusion du tableau productList pour ajouter les quantité et couleurs
    const newProductList = Object.assign({}, productList, {
     theColor : `${select.value}`,
     theQuantity : `${quantityInput.value}`
   });
+  /* transmettre newProductList dans le localstorage */
   localStorage.setItem('product', JSON.stringify(newProductList));
+  // newProductList devient productArray en récupérant du localstorage
   let productArray = JSON.parse(localStorage.getItem('product'));
-    console.log(productArray);
-    /* if(productArray == null){
-      productArray = [];
-      productArray.push(productList);
-      console.log(productList);
-      localStorage.setItem('product', JSON.stringify(productArray));
-    } */ 
-  })
+  /* console.log(newProductList); */
+  if(productArray == null){
+  console.log("productArray est null");
+  productArray = [];
+  productArray.push(newProductList);
+  console.log(productArray);
+  localStorage.setItem('product', JSON.stringify(productArray));
+  productArray = JSON.parse(localStorage.getItem('product'));
+  }
+  else if (productArray != null){
+  console.log('productArray est pas null');
+  for (i = 0; i < produitTableau.length; i++) {
+    console.log("test");
+    }
+  }
+  });
+  return (productArray = JSON.parse(localStorage.getItem('product')));
 }
 }
 // appeler toutes les functions
