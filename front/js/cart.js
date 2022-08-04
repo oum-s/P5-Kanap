@@ -1,36 +1,29 @@
-const App = {
+console.log('salut!');
+const Appli = {
   init : function(){
-    App.displayCart();
+    Appli.displayCart();
   },
-  /* getOneProduct : function(){
-    return(
-      fetch(`http://localhost:3000/api/products`)
-      .then(function(res) {
-        // vérifie que la requête s’est bien passée
-        if(res.ok) {
-        //Récupère le résultat de la requête au format json 
-          return res.json();
-        }
-      })
-      .then(function(products) {
-        //  nous le retournons et récupérons sa vraie valeur
-        console.log('ca marche');
-        App.displayOneProduct(products);
-      })
-      .catch(function(err) {
-        console.log(err);
-      })
-    );
-  }, */
   displayCart : function(){
-    console.log('hey cart!');
-    let addProduct = JSON.parse(localStorage.getItem('product'));
-    if (addProduct) {
-      return addProduct;
-      console.log(addProduct);
-      
-    }
-  }
+    let productArray = JSON.parse(localStorage.getItem('product'));
+    localStorage.setItem('product', JSON.stringify(productArray));
+    console.log(productArray.theName);
+    const templateCartElt = document.querySelector('.templateCart');
+    const cloneTemplateCartElt = document.importNode(templateCartElt.content, true);
+
+    const cartEltContent = cloneTemplateCartElt.querySelector('article');
+    
+    cartEltContent.querySelector('img').src = productArray.theImage;
+    // cartEltContent.querySelector('img').alt = product.altTxt;
+    cartEltContent.querySelector('.cart__item__content__description h2').textContent = productArray.theName;
+    cartEltContent.querySelector('.cart__item__content__description p').textContent = productArray.theColor;
+    cartEltContent.querySelector('.thePrice').textContent = productArray.thePrice;
+    cartEltContent.querySelector('.itemQuantity').value = productArray.theQuantity;
+      // ajoute le tout à son parent
+    document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
+    
+    console.log(document.querySelector('#cart__items'));
+  },
+  
 }
 //  l'info du produit en tant que parametre 
 // recupérer le bouton 
@@ -39,4 +32,4 @@ const App = {
 // Envvoyer tout dans localStoragevariable produittaleau  cherche *
 
 // appeler toutes les functions
-document.addEventListener('DOMContentLoaded', App.init);
+document.addEventListener('DOMContentLoaded', Appli.init);
