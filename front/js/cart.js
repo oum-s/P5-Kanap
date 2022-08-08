@@ -2,46 +2,49 @@ console.log('salut!');
 const Appli = {
   init : function(){
     Appli.displayCart();
-    /* Appli.saveBasket();
-    Appli.getBasket(); */
   },
-  // saveBasket: function(product){
-  //   localStorage.setItem('product', JSON.stringify(productA));
-  // },
-  // getBasket : function() {
-  //   return JSON.parse(localStorage.getItem('product'));
-  // },
-  // addCart : function(product){
-  // console.log('coucou');
-  // let foundProduct = productA.find(p => p._id == productA._id);
-  // if (foundProduct != undefined){
-  //   foundProduct.quantity++;
-  // }else{
-  //   product.quantity = 1;
-  //   productA.push(product);
-  // }
-  
-  // Appli.saveBasket(productA);
-  // console.log(product);
-  // },
   displayCart : function(){
-    let productArray = Appli.getBasket();
+    let productArray = JSON.parse(localStorage.getItem('product'));
     localStorage.setItem('product', JSON.stringify(productArray));
+    console.log(productArray);
     const templateCartElt = document.querySelector('.templateCart');
-    const cloneTemplateCartElt = document.importNode(templateCartElt.content, true);
 
+
+    productArray.forEach(oneProduct => {
+      const cloneTemplateCartElt = document.importNode(templateCartElt.content, true);
     const cartEltContent = cloneTemplateCartElt.querySelector('article');
-    
-    cartEltContent.querySelector('img').src = productArray.theImage;
-    // cartEltContent.querySelector('img').alt = product.altTxt;
-    cartEltContent.querySelector('.cart__item__content__description h2').textContent = productArray.theName;
-    cartEltContent.querySelector('.cart__item__content__description p').textContent = productArray.theColor;
-    cartEltContent.querySelector('.thePrice').textContent = productArray.thePrice+="€";
-    cartEltContent.querySelector('.itemQuantity').value = productArray.theQuantity;
-      // ajoute le tout à son parent
-    document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
-  },
+    console.log(cartEltContent);
+      cartEltContent.querySelector('img').src = oneProduct.theImage;
+      console.log(cartEltContent.querySelector('img').src = oneProduct.theImage);
+      // cartEltContent.querySelector('img').alt = product.altTxt;
+      cartEltContent.querySelector('.cart__item__content__description h2').textContent = oneProduct.theName;
+      cartEltContent.querySelector('.cart__item__content__description p').textContent = oneProduct.theColor;
+      cartEltContent.querySelector('.thePrice').textContent = oneProduct.thePrice;
+      cartEltContent.querySelector('.itemQuantity').value = oneProduct.theQuantity;
+        // ajoute le tout à son parent
+        document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
 
+    });
+    console.log(document.querySelector('#cart__items').appendChild(cloneTemplateCartElt))
+
+  },
+  // addCart: function(){
+  //   let foundProduct =  Array.from(productArray).find(p => p.theId == product._id);
+    
+  //   if (foundProduct != undefined){
+  //     foundProduct.theQuantity++;
+      
+  //   }else {
+  //     productArray.theQuantity = 1;
+  //     productArray.push(productList);
+  //     console.log(foundProduct);
+  //   }
+  //   Appli.saveCart();
+  // },
+  // saveCart : function(){
+  //   let productArray = JSON.parse(localStorage.getItem('product'));
+  //   localStorage.setItem('product', JSON.stringify(productArray));
+  // }
   
 }
 //  l'info du produit en tant que parametre 
