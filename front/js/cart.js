@@ -4,16 +4,17 @@ const Appli = {
     Appli.displayCart();
   },
   displayCart : function(){
+    // on recupère les info du localstorage
     let productArray = JSON.parse(localStorage.getItem('product'));
     localStorage.setItem('product', JSON.stringify(productArray));
     console.log(productArray);
+    // on duplique la div cart
     const templateCartElt = document.querySelector('.templateCart');
-
-
+    // on duplique chaque produit venant du localstorage pour l'insérer dans cart_item 
     productArray.forEach(oneProduct => {
       const cloneTemplateCartElt = document.importNode(templateCartElt.content, true);
-    const cartEltContent = cloneTemplateCartElt.querySelector('article');
-    console.log(cartEltContent);
+      const cartEltContent = cloneTemplateCartElt.querySelector('article');
+      console.log(cartEltContent);
       cartEltContent.querySelector('img').src = oneProduct.theImage;
       console.log(cartEltContent.querySelector('img').src = oneProduct.theImage);
       // cartEltContent.querySelector('img').alt = product.altTxt;
@@ -22,29 +23,11 @@ const Appli = {
       cartEltContent.querySelector('.thePrice').textContent = oneProduct.thePrice;
       cartEltContent.querySelector('.itemQuantity').value = oneProduct.theQuantity;
         // ajoute le tout à son parent
-        document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
+      document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
 
     });
-    console.log(document.querySelector('#cart__items').appendChild(cloneTemplateCartElt))
 
-  },
-  // addCart: function(){
-  //   let foundProduct =  Array.from(productArray).find(p => p.theId == product._id);
-    
-  //   if (foundProduct != undefined){
-  //     foundProduct.theQuantity++;
-      
-  //   }else {
-  //     productArray.theQuantity = 1;
-  //     productArray.push(productList);
-  //     console.log(foundProduct);
-  //   }
-  //   Appli.saveCart();
-  // },
-  // saveCart : function(){
-  //   let productArray = JSON.parse(localStorage.getItem('product'));
-  //   localStorage.setItem('product', JSON.stringify(productArray));
-  // }
+  }
   
 }
 //  l'info du produit en tant que parametre 

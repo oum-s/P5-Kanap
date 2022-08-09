@@ -75,68 +75,43 @@ const Appl = {
     products.forEach(product => {
       if( urlSearchParams.get('id') === product._id){
         console.log('ok panier');
-        // essayer de le placer ailleurs
+        // liste des produits qui s'afficheront
           productList = {
             theId : product._id, 
             theImage : product.imageUrl,
             theName : product.name,
             theColor : product.colors,
             thePrice : product.price,
-              };
+          };
+              // tableau des produits qui seront dans le local storage
               productListArray = [];
-              console.log(productListArray);
-        button.addEventListener("click", (e) => {
-          e.preventDefault();
-            const newProductObject = Object.assign({}, productList, { theColor : `${select.value}`,theQuantity : `${quantityInput.value}`
-            });
-              /* transmettre newProductObject dans le localstorage */
-                  // localStorage.setItem('product', JSON.stringify(newProductObject));
-                  // newProductObject devient productArray en récupérant du localstorage
-                  /* let productArray = JSON.parse(localStorage.getItem('product')); */
-                  /* console.log(newProductObject); */
-                    /*  if(newProductObject == null){ */
-                    /*  console.log("productArray est null"); */
-                   /*  console.log(newProductObject); */
-                      // productListArray = [];
-                      // productListArray.push(newProductObject);
-                      
+                // au clic on envoie les produits selectionnés dans le localstorage
+                button.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  // modification de productList avec la valeur de la couleur et quantité selectionné
+                  const newProductObject = Object.assign({}, productList, { theColor : `${select.value}`,theQuantity : `${quantityInput.value}`
+                  });
 
-
-                      productListArray.push(newProductObject);
-            console.log(productListArray);
-                      localStorage.setItem('product', JSON.stringify(productListArray));
-                      let productArray = JSON.parse(localStorage.getItem('product'));
-                      /* }
-                      else{
-                      console.log('productArray est pas null');
-                      /* let foundProduct =  Array.from(productArray).find(p => p.theId == product._id);
-                      if (foundProduct != undefined){
-                        foundProduct.theQuantity++;
-                      }else {
-                        productArray.theQuantity = 1;
-                        // trouver quoi mettre à la place de product
-                        productArray.push(product);
-                        console.log(foundProduct); 
-                     } */ 
-        });              
-        // création d'un nouvel array pour y mettre l'objet newProductObject
-                
+                  if (select.value  == false && quantityInput.value == 0 ) {
+                    confirm("Veuillez sélectionner une couleur et le nombre d'articles souhaités");
+                  }else if (select.value == false) {
+                    confirm("Veuillez sélectionner une couleur");
+                  } else if (quantityInput.value == 0) {
+                    confirm("Veuillez sélectionner le nombre d'articles souhaités");
+                  } else {
+                    alert("Votre article a bien été ajouté au panier");
+                    // on insère la fusion de productList dans le tableau pour avoir tous les produits selectionné dans un seul endroit
+                    productListArray.push(newProductObject);
+                    localStorage.setItem('product', JSON.stringify(productListArray));
+                    let productArray = JSON.parse(localStorage.getItem('product'));  
+                  }      
+                });
       }else{
-          console.log('no panier')
-        };
-
+        console.log('no panier')
+      };
     });
-    // onclick on envoie les infos nécessaire au localstorage
-    
-    /* return (productArray = JSON.parse(localStorage.getItem('product'))) */;
   }
 // fin fonction Appl
 }
 // appeler toutes les functions
 document.addEventListener('DOMContentLoaded', Appl.init);
-// recuperer l'id et e mettre au key de localstorage 
-/* Lorsqu’on ajoute un produit au panier, si celui-ci n'était pas déjà
-              présent dans le panier, on ajoute un nouvel élément dans l’array.
-              ● Lorsqu’on ajoute un produit au panier, si celui-ci était déjà présent
-              dans le panier (même id + même couleur), on incrémente
-              simplement la quantité du produit correspondant dans l’array. */
