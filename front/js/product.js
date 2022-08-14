@@ -1,5 +1,8 @@
 console.log('hey, you');
 const Appl = {
+  // tableau des produits qui seront dans le local storage
+  productSelectedArray : [],
+
   init : function(){
          console.log("Appl.init activé");
          Appl.getOneProduct();
@@ -71,23 +74,23 @@ const Appl = {
     const theSelect = selectColor.value;
 
     // foreach pour récupérer l'id de l'url et selectionner les éléments de l'api pour le tableau
+
     products.forEach(product => {
 
       if( urlSearchParams.get('id') === product._id){
         console.log('ok panier');
-        // tableau des produits qui seront dans le local storage
-        productSelectedArray = [];
+
         // au clic on envoie les produits selectionnés dans le localstorage
         button.addEventListener("click", (e) => {
           e.preventDefault();
           // liste des elements qui s'afficheront dans le panier
           productSelectedObject = {
-                    theId : product._id, 
-                    theImage : product.imageUrl,
-                    theName : product.name,
-                    thePrice : parseInt(product.price),
-                    theColor : selectColor.value,
-                    theQuantity : parseInt(quantityInput.value)
+            theId : product._id, 
+            theImage : product.imageUrl,
+            theName : product.name,
+            thePrice : parseInt(product.price),
+            theColor : selectColor.value,
+            theQuantity : parseInt(quantityInput.value)          
           };          
           // if else pour empêcher le client d'envoyer un produit vide
             if (selectColor.value  == false && quantityInput.value == 0 ) {
@@ -100,29 +103,29 @@ const Appl = {
               /* alert("Votre article a bien été ajouté au panier"); */
               console.log("Votre article a bien été ajouté au panier"); 
               //si le tableau est vide on met l'obket dans le tableau et on l'envoie dans le localstorage
-                if(productSelectedArray.length == 0){
+                if(Appl.productSelectedArray.length === 0){
 
-                    productSelectedArray.push(productSelectedObject);
-                    localStorage.setItem('product', JSON.stringify(productSelectedArray));
-                    console.log("1");
+                  Appl.productSelectedArray.push(productSelectedObject);
+                  localStorage.setItem('product', JSON.stringify(Appl.productSelectedArray));
+                  console.log("1");  
                 }else{
                   // Selectionner l'objet dont l’id correspond à un autre id présent dans le panier et la même couleur
-                  foundSameProduct = productSelectedArray.find(p => p.theId === productSelectedObject.theId && p.theColor === productSelectedObject.theColor);
+                  /* let productArray = JSON.parse(localStorage.getItem('product')); */
+                  foundSameProduct = Appl.productSelectedArray.find(p => p.theId === productSelectedObject.theId && p.theColor === productSelectedObject.theColor);
+                  console.log(foundSameProduct);
                   console.log("2");
-                  console.log('found',foundSameProduct);
-                  // si l'objet doublon est pas défini on push
-                  if (foundSameProduct === undefined) {
-                    productSelectedArray.push(productSelectedObject);
-                    localStorage.setItem('product', JSON.stringify(productSelectedArray));
+                  if (foundSameProduct == undefined) {
+                    Appl.productSelectedArray.push(productSelectedObject);
+                    localStorage.setItem('product', JSON.stringify(Appl.productSelectedArray));
                     console.log("2.1");
                     
-                  }else{
-                    /* j'ecrase l'objet de ce produit et je renvoie un nouvel objet avec la bonne quantité */
-                    // je remplace l'ancien tableau par le nouveau tableau
-                    Object.assign(foundSameProduct, productSelectedObject);
-                    localStorage.setItem('product', JSON.stringify(productSelectedArray)); 
+                   }else{
+                    indexOfQuantity = Appl.productSelectedArray.findIndex((x => x.theQuantity == foundSameProduct.theQuantity));
+                    // je met à jour la quantité du localstorage en incrementant le nombre de produit que je viens d'ajouter avec le nombre de produit qui était déjà présent
+                    Appl.productSelectedArray[indexOfQuantity].theQuantity = productSelectedObject.theQuantity += parseInt(foundSameProduct.theQuantity);
+                    localStorage.setItem('product', JSON.stringify(Appl.productSelectedArray)); 
                     console.log("2.2");
-                    console.log('yesss', productSelectedArray)  ;  
+                    console.log('yesss', Appl.productSelectedArray)  ;  
                   } 
                 }   
             }   
