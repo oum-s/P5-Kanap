@@ -5,8 +5,8 @@ const Appli = {
   },
   displayCart : function(){
     // on recupère les info du localstorage
-    let productArray = JSON.parse(localStorage.getItem('product'));
-    localStorage.setItem('product', JSON.stringify(productArray));
+    let productArray = JSON.parse(localStorage.getItem('allProduct'));
+    localStorage.setItem('allProduct', JSON.stringify(productArray));
     console.log(productArray);
     // on duplique la div cart
     const templateCartElt = document.querySelector('.templateCart');
