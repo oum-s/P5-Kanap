@@ -1,9 +1,8 @@
-console.log('hey, you');
+console.log('hey, product');
 const Appl = {
   init : function(){
-         console.log("Appl.init activé");
-         Appl.getOneProduct();
-         
+    console.log("Appl.init activé");
+    Appl.getOneProduct();    
   },
   // Afficher toutes les API
   getOneProduct : function(){
