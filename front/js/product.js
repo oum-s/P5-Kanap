@@ -1,11 +1,8 @@
-console.log('hey, you');
+console.log('hey, product');
 const Appl = {
-  // tableau des produits qui seront dans le local storage
-  productSelectedArray : [],
-
   init : function(){
-         console.log("Appl.init activé");
-         Appl.getOneProduct();
+    console.log("Appl.init activé");
+    Appl.getOneProduct();    
   },
   // Afficher toutes les API
   getOneProduct : function(){
@@ -72,9 +69,11 @@ const Appl = {
     const selectColor = document.getElementById('colors');
     const quantityInput = document.querySelector('#quantity');
     const theSelect = selectColor.value;
+    let productSelectedArray = JSON.parse(localStorage.getItem('allProduct'));
+    // tableau des produits qui seront dans le local storage
+    if (productSelectedArray == null) productSelectedArray = [];
 
     // foreach pour récupérer l'id de l'url et selectionner les éléments de l'api pour le tableau
-
     products.forEach(product => {
 
       if( urlSearchParams.get('id') === product._id){
@@ -102,30 +101,35 @@ const Appl = {
             } else {
               /* alert("Votre article a bien été ajouté au panier"); */
               console.log("Votre article a bien été ajouté au panier"); 
-              //si le tableau est vide on met l'obket dans le tableau et on l'envoie dans le localstorage
-                if(Appl.productSelectedArray.length === 0){
+              //si le tableau est vide on met l'objet dans le tableau et on l'envoie dans le localstorage
+                if(productSelectedArray.length === 0){
 
-                  Appl.productSelectedArray.push(productSelectedObject);
-                  localStorage.setItem('product', JSON.stringify(Appl.productSelectedArray));
+                  localStorage.setItem('product', JSON.stringify(productSelectedObject));
+                  productSelectedArray.push(productSelectedObject);
+                  localStorage.setItem('allProduct', JSON.stringify(productSelectedArray));
                   console.log("1");  
+
                 }else{
-                  // Selectionner l'objet dont l’id correspond à un autre id présent dans le panier et la même couleur
-                  /* let productArray = JSON.parse(localStorage.getItem('product')); */
-                  foundSameProduct = Appl.productSelectedArray.find(p => p.theId === productSelectedObject.theId && p.theColor === productSelectedObject.theColor);
-                  console.log(foundSameProduct);
+                  // Selectionner l'objet dont l’id correspond à un autre id et la même couleur présent dans le panier 
+                  /* let productLocalStorage = JSON.parse(localStorage.getItem('product')); */
+                  foundSameProduct = productSelectedArray.find(p => p.theId === productSelectedObject.theId && p.theColor === productSelectedObject.theColor);
+                  console.log('array', productSelectedArray);
                   console.log("2");
                   if (foundSameProduct == undefined) {
-                    Appl.productSelectedArray.push(productSelectedObject);
-                    localStorage.setItem('product', JSON.stringify(Appl.productSelectedArray));
+                    localStorage.setItem('product', JSON.stringify(productSelectedObject));
+                    productSelectedArray.push(productSelectedObject);
+                    localStorage.setItem('allProduct', JSON.stringify(productSelectedArray));
                     console.log("2.1");
                     
                    }else{
-                    indexOfQuantity = Appl.productSelectedArray.findIndex((x => x.theQuantity == foundSameProduct.theQuantity));
+                    localStorage.setItem('product', JSON.stringify(productSelectedObject));
+                    indexOfQuantity = productSelectedArray.findIndex((x => x.theQuantity == foundSameProduct.theQuantity));
                     // je met à jour la quantité du localstorage en incrementant le nombre de produit que je viens d'ajouter avec le nombre de produit qui était déjà présent
-                    Appl.productSelectedArray[indexOfQuantity].theQuantity = productSelectedObject.theQuantity += parseInt(foundSameProduct.theQuantity);
-                    localStorage.setItem('product', JSON.stringify(Appl.productSelectedArray)); 
+                    productSelectedArray[indexOfQuantity].theQuantity = productSelectedObject.theQuantity += parseInt(foundSameProduct.theQuantity);
+                    /* const productSelectedArray = new productSelectedArray; */
+                    localStorage.setItem('allProduct', JSON.stringify(productSelectedArray)); 
                     console.log("2.2");
-                    console.log('yesss', Appl.productSelectedArray)  ;  
+                    console.log('yesss', productSelectedArray);  
                   } 
                 }   
             }   

@@ -1,12 +1,14 @@
-console.log('salut!');
+console.log('salut cart!');
 const Appli = {
   init : function(){
+    console.log('hey init');
     Appli.displayCart();
+    Appli.removeProduct();
   },
   displayCart : function(){
     // on recupère les info du localstorage
-    let productArray = JSON.parse(localStorage.getItem('product'));
-    localStorage.setItem('product', JSON.stringify(productArray));
+    let productArray = JSON.parse(localStorage.getItem('allProduct'));
+    localStorage.setItem('allProduct', JSON.stringify(productArray));
     console.log(productArray);
     // on duplique la div cart
     const templateCartElt = document.querySelector('.templateCart');
@@ -24,17 +26,18 @@ const Appli = {
       cartEltContent.querySelector('.itemQuantity').value = oneProduct.theQuantity;
         // ajoute le tout à son parent
       document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
-
+      return cartEltContent;   
     });
+  },
 
-  }
+  removeProduct : function(){
+    const recup = Appli.displayCart();
+    console.log('recup',recup)
+    // let productArray = JSON.parse(localStorage.getItem('allProduct'));
+    const deleteButton = cartEltContent.querySelector('.deleteItem');
+    console.log(deleteButton);
+  },
   
 }
-//  l'info du produit en tant que parametre 
-// recupérer le bouton 
-// ajoute eventlistener au bouton : 
-// variable select recupere toute la valeur
-// Envvoyer tout dans localStoragevariable produittaleau  cherche *
-
 // appeler toutes les functions
 document.addEventListener('DOMContentLoaded', Appli.init);
