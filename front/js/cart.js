@@ -3,9 +3,10 @@ const Appli = {
   init : function(){
     console.log('hey init');
     Appli.displayCart();
-    Appli.deleteProduct();
     Appli.updateProduct();
+    Appli.deleteProduct();
   },
+
   displayCart : function(){
     // on recupère les info du localstorage
     let productArray = JSON.parse(localStorage.getItem('allProduct'));
@@ -29,6 +30,32 @@ const Appli = {
     });
   },
 
+  updateProduct : function(){
+    // select tous les input quantity
+    const updateItems = document.querySelectorAll('.itemQuantity')
+    // recup le tableau du localstorage
+    let productArray = JSON.parse(localStorage.getItem('allProduct'));
+
+    // pour chaque input, quand la valeur change on la modifie dans le tableau (si id/color de l'article selectionné == id/color d'un objet du tableau -> changer l'objet du tableau)
+    updateItems.forEach(item => {
+      item.addEventListener('change', event => {
+        // vise la balise article la plus proche de l'élément cliqué
+        const article = event.target.closest('article');
+        // attrape attribut/couleur de l'article en question
+        const thisId = article.getAttribute('data-id');
+        const thisColor = article.getAttribute('data-color');
+
+        // find l'objet du tableau == article en question
+        productToUpdate = productArray.find(x => x.theId == thisId && x.theColor == thisColor );
+        // met à jour la valeur de la quantité de l'objet qui correspond
+        productToUpdate.theQuantity = item.value;
+        // met à jour le localstorage
+        localStorage.setItem('allProduct', JSON.stringify(productArray)); 
+        console.log(productArray);
+      })
+    })
+  }, 
+
   deleteProduct : function(){
     const deleteItems = document.querySelectorAll('.deleteItem')
     let productArray = JSON.parse(localStorage.getItem('allProduct'));
@@ -50,25 +77,9 @@ const Appli = {
         console.log(productArray);
       })
     })
-  },
-
-  updateProduct : function(){
-    const updateItems = document.querySelectorAll('.itemQuantity')
-    let productArray = JSON.parse(localStorage.getItem('allProduct'));
-
-    updateItems.forEach(item => {
-      item.addEventListener('change', event => {
-        const article = event.target.closest('article');
-        const thisId = article.getAttribute('data-id');
-        const thisColor = article.getAttribute('data-color');
-
-        productToUpdate = productArray.find(x => x.theId == thisId && x.theColor == thisColor );
-        productToUpdate.theQuantity = item.value;
-        localStorage.setItem('allProduct', JSON.stringify(productArray)); 
-        console.log(productArray);
-      })
-    })
   }
+
+
   
 }
 // appeler toutes les functions
