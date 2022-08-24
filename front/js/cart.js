@@ -21,8 +21,7 @@ const Appli = {
       .then(function(products) {
         //  nous le retournons et récupérons sa vraie valeur
         console.log('ca marche');
-        Appli.totalArticles(products);
-        Appli.priceAmount(products);
+        Appli.resultProducts(products);
       })
       .catch(function(err) {
         console.log(err);
@@ -31,13 +30,12 @@ const Appli = {
   },
 
   displayCart : function(){
-    // on recupère les info du localstorage
-    let productArray = JSON.parse(localStorage.getItem('allProduct'));
-    localStorage.setItem('allProduct', JSON.stringify(productArray));
+    let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
+    localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage));
     // on duplique la div cart
     const templateCartElt = document.querySelector('.templateCart');
     // on duplique chaque produit venant du localstorage pour l'insérer dans cart_item 
-    productArray.forEach(oneProduct => {
+    productArrayInLocalStorage.forEach(oneProduct => {
       const cloneTemplateCartElt = document.importNode(templateCartElt.content, true);
       const cartEltContent = cloneTemplateCartElt.querySelector('article');
       cartEltContent.setAttribute('data-id', oneProduct.theId);
@@ -57,7 +55,7 @@ const Appli = {
     // select tous les input quantity
     const updateItems = document.querySelectorAll('.itemQuantity')
     // recup le tableau du localstorage
-    let productArray = JSON.parse(localStorage.getItem('allProduct'));
+    let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
 
     // pour chaque input, quand la valeur change on la modifie dans le tableau (si id/color de l'article selectionné == id/color d'un objet du tableau -> changer l'objet du tableau)
     updateItems.forEach(item => {
@@ -69,119 +67,91 @@ const Appli = {
         const thisColor = article.getAttribute('data-color');
 
         // find l'objet du tableau == article en question
-        productToUpdate = productArray.find(x => x.theId == thisId && x.theColor == thisColor );
+        productToUpdate = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
         // met à jour la valeur de la quantité de l'objet qui correspond
         productToUpdate.theQuantity = item.value;
         // met à jour le localstorage
-        localStorage.setItem('allProduct', JSON.stringify(productArray)); 
-        console.log(productArray);
+        localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
+        console.log(productArrayInLocalStorage);
       })
     })
   }, 
 
   deleteProduct : function(){
     const deleteItems = document.querySelectorAll('.deleteItem')
-    let productArray = JSON.parse(localStorage.getItem('allProduct'));
+    let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
 
     deleteItems.forEach(item => {
       item.addEventListener('click', event => {
         const article = event.target.closest('article');
         const thisId = article.getAttribute('data-id');
         const thisColor = article.getAttribute('data-color');
-        console.log(productArray);
+        console.log(productArrayInLocalStorage);
 
-        // si l'article a le meme id et couleur que dans un findId/couleur de productArray = supprimer le found
+        // si l'article a le meme id et couleur que dans un findId/couleur de productArrayInLocalStorage = supprimer le found
         // l'objet a été récupéré
-        productToDelete = productArray.find(x => x.theId == thisId && x.theColor == thisColor );
+        productToDelete = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
         
-        productArray.pop(productToDelete) ;
-        localStorage.setItem('allProduct', JSON.stringify(productArray)); 
+        productArrayInLocalStorage.pop(productToDelete) ;
+        localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
         console.log(productToDelete);
-        console.log(productArray);
+        console.log(productArrayInLocalStorage);
       })
     })
   },
 
- /*  resultProducts : function(products){
-    let productArray = JSON.parse(localStorage.getItem('allProduct'));
-    //trouve pas le tableau
-    console.log('productArray',productArray);
+  resultProducts : function(products){
+        // on recupère les info du localstorage pour utiliser la quantité
+    let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
+    console.log('productArrayInLocalStorage', productArrayInLocalStorage);
+    // déclarer les variables pour qu'elles soient gloabales
     let finalPrice = 0;
+    // variable du calcul quantité * prix
     let sum = 0;
-    productArray.forEach(theProduct => {
-      
+    // le nombre total des produits sélectionnés
+    let totalProducts = 0;
+    // pour chaque produit du localstorage, vérifier que l'id correspond à l'id de l'API pour pouvoir faire le calcul
+    productArrayInLocalStorage.forEach(theProduct => {
+      // foreach des produits de l'api
       products.forEach(product => {
 
         if ( product._id == theProduct.theId ){
         console.log('good');
-        
-        let calculPrice = parseInt(product.price);
-        let calculInput = parseInt(theProduct.theQuantity);
-        console.log('calculPrice et input', calculPrice, calculInput);
+        // renvoyer un entier pour les prix et les quantités
+        let productPrice = parseInt(product.price);
+        quantityOfOneProduct = parseInt(theProduct.theQuantity);
+        totalProducts += quantityOfOneProduct ;
+        console.log('productPrice et input', productPrice, quantityOfOneProduct);
         // calcul : prixDuProduit * quantitéDeLinput
-          sum = calculPrice * calculInput;
+          sum = productPrice * totalProducts;
           console.log('sum is:', sum);
-
+          finalPrice = sum;
+          /* finalPrice += sum;
+          console.log(sum); */
         // additionner le prix de chaque produit du tableau pour avoir le total
           
         };
+
       });
 
     });
-    finalPrice = Number(sum) * Number(productArray.length);
+    console.log(sum)
+    // afficher la valeur de totalQuantity 
+    const totalQuantity = document.querySelector('#totalQuantity');
+    totalQuantity.textContent = totalProducts;
+    console.log('totalProducts', totalProducts);
+    
           console.log('total', finalPrice);
         //
-          // for (let i = 0; i < productArray.length; i++){ 
+          // for (let i = 0; i < productArrayInLocalStorage.length; i++){ 
           //     finalPrice = sum[i] ;
-          //     console.log('longueur:',productArray.length);
+          //     console.log('longueur:',productArrayInLocalStorage.length);
           // } 
 
           let totalPrice = document.getElementById('totalPrice');
           totalPrice.textContent = finalPrice;
           console.log('finalPrice', finalPrice);
-  }  */
-  totalArticles : function(products) {
-    let totalItems = 0;
-    let productArray = JSON.parse(localStorage.getItem('allProduct'));
-    for (l in productArray) {
-      // analyser et convertir la valeur 'quantité' dans le localstorage en une chaîne
-      // et renvoie un entier (parseInteger), sur la base décimale de 10
-      const newQuantity = parseInt(productArray[l].theQuantity);
-  
-      // attribuer la valeur retournée par parseInt à la variable totalItems
-      totalItems += newQuantity;
-    }
-      // attribuer à #totalQuantité la valeur de totalItems et l'afficher dans le DOM
-      const totalQuantity = document.getElementById('totalQuantity');
-      totalQuantity.textContent = totalItems;
-      console.log('totalItem', totalItems);
-  },
-  
-  // je calcule le montant total du panier
-  priceAmount : function(products) {
-    const calculPrice = [];
-    let productArray = JSON.parse(localStorage.getItem('allProduct'));
-    products.forEach( product => {
-      for (m = 0; m < productArray.length; m++) {
-        // prix de l'article quantité * prix
-        const cartAmount = product.price * productArray[m].theQuantity;
-        console.log('product.price',product.price);
-        console.log('quantité',productArray[m].theQuantity);
-        console.log('cartAmount',cartAmount);
-        calculPrice.push(cartAmount);
-    
-        // la fonction reduce() permet de garder en mémoire les résultats de l'opération
-        // elle fonctionne comme une boucle, avec un accumulateur et la valeur courante
-        const reduce = (previousValue, currentValue) => previousValue + currentValue;
-        total = calculPrice.reduce(reduce);
-      }
-    } );
-    const totalPrice = document.getElementById('totalPrice');
-    totalPrice.textContent = total;
-  }
-  
-  } // fin else : s'il y a des produits dans le panier
-  
-
+  } 
+}
 // appeler toutes les functions
 document.addEventListener('DOMContentLoaded', Appli.init);
