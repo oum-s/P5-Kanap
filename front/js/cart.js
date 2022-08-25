@@ -101,57 +101,46 @@ const Appli = {
   },
 
   resultProducts : function(products){
-        // on recupère les info du localstorage pour utiliser la quantité
-    let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
-    console.log('productArrayInLocalStorage', productArrayInLocalStorage);
-    // déclarer les variables pour qu'elles soient gloabales
-    let finalPrice = 0;
-    // variable du calcul quantité * prix
-    let sum = 0;
-    // le nombre total des produits sélectionnés
-    let totalProducts = 0;
-    // pour chaque produit du localstorage, vérifier que l'id correspond à l'id de l'API pour pouvoir faire le calcul
-    productArrayInLocalStorage.forEach(theProduct => {
-      // foreach des produits de l'api
-      products.forEach(product => {
-
-        if ( product._id == theProduct.theId ){
-        console.log('good');
-        // renvoyer un entier pour les prix et les quantités
+    // on recupère les info du localstorage pour utiliser la quantité
+  let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
+  console.log('productArrayInLocalStorage', productArrayInLocalStorage);
+  let finalPrice = 0;
+  let sum = 0;
+  let totalProducts = 0;
+  productArrayInLocalStorage.forEach(theProduct => {
+  // foreach des produits de l'api
+    products.forEach(product => {
+    
+      if ( product._id == theProduct.theId ){
+      console.log('good');
+      // renvoyer un entier pour les prix et les quantités
         let productPrice = parseInt(product.price);
         quantityOfOneProduct = parseInt(theProduct.theQuantity);
-        totalProducts += quantityOfOneProduct ;
-        console.log('productPrice et input', productPrice, quantityOfOneProduct);
-        // calcul : prixDuProduit * quantitéDeLinput
-          sum = productPrice * totalProducts;
-          console.log('sum is:', sum);
-          finalPrice = sum;
-          /* finalPrice += sum;
-          console.log(sum); */
-        // additionner le prix de chaque produit du tableau pour avoir le total
-          
-        };
-
-      });
-
-    });
-    console.log(sum)
-    // afficher la valeur de totalQuantity 
-    const totalQuantity = document.querySelector('#totalQuantity');
-    totalQuantity.textContent = totalProducts;
-    console.log('totalProducts', totalProducts);
-    
-          console.log('total', finalPrice);
-        //
-          // for (let i = 0; i < productArrayInLocalStorage.length; i++){ 
-          //     finalPrice = sum[i] ;
-          //     console.log('longueur:',productArrayInLocalStorage.length);
-          // } 
-
-          let totalPrice = document.getElementById('totalPrice');
-          totalPrice.textContent = finalPrice;
-          console.log('finalPrice', finalPrice);
-  } 
+        // a chaque foreach on ajoute à totalProduct la quantité d'un produit
+          // totalProducts = quantityOfOneProduct ;
+          console.log('productPrice et input', productPrice, totalProducts);
+          // calcul : prixDuProduit * quantitéDeLinput
+            sum = productPrice * quantityOfOneProduct;
+            console.log('sum is:', sum);
+            /* finalPrice = sum; */
+            finalPrice += sum;
+            totalProducts += quantityOfOneProduct ;
+      };
+   
+  });
+  
+  });
+  console.log(sum)
+  const totalQuantity = document.querySelector('#totalQuantity');
+  totalQuantity.textContent = totalProducts;
+  console.log('totalProducts', totalProducts);
+  
+      console.log('total', finalPrice);
+  
+      let totalPrice = document.getElementById('totalPrice');
+      totalPrice.textContent = finalPrice;
+      console.log('finalPrice', finalPrice);
+  }   
 }
 // appeler toutes les functions
 document.addEventListener('DOMContentLoaded', Appli.init);
