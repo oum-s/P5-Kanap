@@ -87,7 +87,7 @@ const Appl = {
             theId : product._id, 
             theImage : product.imageUrl,
             theName : product.name,
-            thePrice : parseInt(product.price),
+            /* thePrice : parseInt(product.price), */
             theColor : selectColor.value,
             theQuantity : parseInt(quantityInput.value)          
           };          
