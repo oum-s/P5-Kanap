@@ -6,6 +6,7 @@ const Appli = {
     Appli.displayCart();
     Appli.updateProduct();
     Appli.deleteProduct();
+    Appli.formVerif();
   },
 
   fetchProducts : function(){
@@ -47,7 +48,7 @@ const Appli = {
       cartEltContent.querySelector('.thePrice').textContent = oneProduct.thePrice;
       cartEltContent.querySelector('.itemQuantity').value = oneProduct.theQuantity;
         // ajoute le tout à son parent
-      document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
+        document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
     });
   },
 
@@ -66,13 +67,13 @@ const Appli = {
         const thisId = article.getAttribute('data-id');
         const thisColor = article.getAttribute('data-color');
 
-        // find l'objet du tableau == article en question
-        productToUpdate = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
-        // met à jour la valeur de la quantité de l'objet qui correspond
-        productToUpdate.theQuantity = item.value;
-        // met à jour le localstorage
-        localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
-        console.log(productArrayInLocalStorage);
+          // find l'objet du tableau == article en question
+          productToUpdate = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
+            // met à jour la valeur de la quantité de l'objet qui correspond
+            productToUpdate.theQuantity = item.value;
+              // met à jour le localstorage
+              localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
+              console.log(productArrayInLocalStorage);
       })
     })
   }, 
@@ -88,59 +89,135 @@ const Appli = {
         const thisColor = article.getAttribute('data-color');
         console.log(productArrayInLocalStorage);
 
-        // si l'article a le meme id et couleur que dans un findId/couleur de productArrayInLocalStorage = supprimer le found
-        // l'objet a été récupéré
-        productToDelete = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
-        
-        productArrayInLocalStorage.pop(productToDelete) ;
-        localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
-        console.log(productToDelete);
-        console.log(productArrayInLocalStorage);
+          // si l'article a le meme id et couleur que dans un findId/couleur de productArrayInLocalStorage = supprimer le found
+          // l'objet a été récupéré
+          productToDelete = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
+          
+            productArrayInLocalStorage.pop(productToDelete) ;
+            localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
+            console.log(productToDelete);
+            console.log(productArrayInLocalStorage);
       })
     })
   },
 
   resultProducts : function(products){
     // on recupère les info du localstorage pour utiliser la quantité
-  let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
-  console.log('productArrayInLocalStorage', productArrayInLocalStorage);
-  let finalPrice = 0;
-  let sum = 0;
-  let totalProducts = 0;
-  productArrayInLocalStorage.forEach(theProduct => {
-  // foreach des produits de l'api
-    products.forEach(product => {
+    let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
+    let finalPrice = 0;
+    let sum = 0;
+    let totalProducts = 0;
+      // foreach chaque produit du ls
+      productArrayInLocalStorage.forEach(theProduct => {
+      // foreach des produits de l'api
+        products.forEach(product => {
+        
+          if ( product._id == theProduct.theId ){
+          console.log('good');
+          // renvoyer un entier pour les prix et les quantités
+            let productPrice = parseInt(product.price);
+            let quantityOfOneProduct = parseInt(theProduct.theQuantity);
+              // calcul : prixDuProduit * quantitéDuProduit
+                sum = productPrice * quantityOfOneProduct;
+                console.log('sum is:', sum);
+                // à chaque foreach, j'ajoute la somme du prix du produit trouvé à la somme total
+                finalPrice += sum;
+                // a chaque foreach on ajoute à totalProduct la quantité d'un produit
+                totalProducts += quantityOfOneProduct ;
+          };
+        });
+      });
+        // affichage de la quantité d'article dans le panier
+        const totalQuantity = document.querySelector('#totalQuantity');
+        totalQuantity.textContent = totalProducts;
+        console.log('totalProducts', totalProducts);
+        console.log('total', finalPrice);
+          // affichage du prix final/total
+          let totalPrice = document.getElementById('totalPrice');
+          totalPrice.textContent = finalPrice;
+          console.log('finalPrice', finalPrice);
+  },
+
+  formVerif : function(){
+    console.log('form existe')
+    // selectionne le formulaire
+    let form = document.querySelector('#loginForm');
+    let order = document.querySelector('#order');
+
+      // Select les input
+      let firstName = document.getElementById("firstName");
+      let lastName = document.getElementById("lastName");
+      let address = document.getElementById("address");
+      let city = document.getElementById("city");
+      let email = document.getElementById("email");
+
+        // Msg d'erreurs
+        let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+        let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+        let addressErrorMsg = document.getElementById("addressErrorMsg");
+        let cityErrorMsg = document.getElementById("cityErrorMsg");
+        let emailErrorMsg = document.getElementById("emailErrorMsg");
+
+          // regex test
+          let regexNames = new RegExp("^[a-z]+[ \-']?[[a-z]+[ \-']?]*[a-z]+$", "gi");
+          let regexAdress = new RegExp('^([0-9]{5}|[a-zA-Z][a-zA-Z ]{0,49})$');
+          let regexCity = new RegExp('^[a-zA-Z.-]+(?:[\s-][\/a-zA-Z.]+)*$');
+          let regexEmail = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$', 'g');
+
+            // tableaux à envoyer
+            const contact = [];
+            const products = [];
+
+              // Fonction qui permet de tester le regex et ajouter un msg d'erreur 
+              const checkForm = function(regexTest, thisInput, errorMsg, message){
+                // variable qui test s'il y a une correspondance entre regexName et la valeur de l'input firstName
+                let test = regexTest.test(thisInput.value);
+                console.log('cest ok');
+                  // si le test est false un msg d'erreur apparaît
+                  if( test == true ){
+                    console.log(` ${message} valide `)
+                    errorMsg.innerHTML = " ";
+                    }else{
+                      errorMsg.innerHTML = ` ${message} invalide `
+                    }
+              }
+
+                // verif Prenom
+                firstName.addEventListener('change', () =>{
+                  console.log('firstName ok')
+                    // fonction pour stocker les test et changements
+                      checkForm(regexNames, this, firstNameErrorMsg, "Prenom")
+                });
+
+                // verif Nom
+                lastName.addEventListener('change', () =>{
+                  console.log('lastName ok')
+                    // fonction pour stocker les test et changements
+                      checkForm(regexNames, this, lastNameErrorMsg, "Nom")
+                });
+
+                // verif Prenom
+                address.addEventListener('change', () =>{
+                  console.log('address ok')
+                    // fonction pour stocker les test et changements
+                      checkForm(regexAdress, this, addressErrorMsg, "Adresse")
+                });
+
+                // verif Prenom
+                city.addEventListener('change', () =>{
+                  console.log('city ok')
+                    // fonction pour stocker les test et changements
+                      checkForm(regexCity, this, cityErrorMsg, "Ville")
+                });
+
+                // verif Prenom
+                email.addEventListener('change', () =>{
+                  console.log('email ok')
+                    // fonction pour stocker les test et changements
+                      checkForm(regexEmail, this, emailErrorMsg, "Email")
+                });
     
-      if ( product._id == theProduct.theId ){
-      console.log('good');
-      // renvoyer un entier pour les prix et les quantités
-        let productPrice = parseInt(product.price);
-        quantityOfOneProduct = parseInt(theProduct.theQuantity);
-        // a chaque foreach on ajoute à totalProduct la quantité d'un produit
-          // totalProducts = quantityOfOneProduct ;
-          console.log('productPrice et input', productPrice, totalProducts);
-          // calcul : prixDuProduit * quantitéDeLinput
-            sum = productPrice * quantityOfOneProduct;
-            console.log('sum is:', sum);
-            /* finalPrice = sum; */
-            finalPrice += sum;
-            totalProducts += quantityOfOneProduct ;
-      };
-   
-  });
-  
-  });
-  console.log(sum)
-  const totalQuantity = document.querySelector('#totalQuantity');
-  totalQuantity.textContent = totalProducts;
-  console.log('totalProducts', totalProducts);
-  
-      console.log('total', finalPrice);
-  
-      let totalPrice = document.getElementById('totalPrice');
-      totalPrice.textContent = finalPrice;
-      console.log('finalPrice', finalPrice);
-  }   
+  }
 }
 // appeler toutes les functions
 document.addEventListener('DOMContentLoaded', Appli.init);
