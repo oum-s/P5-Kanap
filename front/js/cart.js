@@ -1,4 +1,5 @@
 console.log('salut cart!');
+// récupérer le localstorage au début pour y avoir accès partout
 const Appli = {
   init : function(){
     console.log('hey init');
@@ -164,59 +165,84 @@ const Appli = {
           let regexCity = new RegExp('^[a-zA-Z.-]+(?:[\s-][\/a-zA-Z.]+)*$');
           let regexEmail = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$', 'g');
 
-            // tableaux à envoyer
-            const contact = [];
-            const products = [];
+          // tableaux à envoyer
+              // récupérer le panier et récup les id pour les mettre dans le tableau products
+              const productsCart = JSON.parse(localStorage.getItem('allProduct'));
+              const products = productsCart.map(({theId})=> theId);
 
-              // Fonction qui permet de tester le regex et ajouter un msg d'erreur 
-              const checkForm = function(regexTest, thisInput, errorMsg, message){
-                // variable qui test s'il y a une correspondance entre regexName et la valeur de l'input firstName
-                let test = regexTest.test(thisInput.value);
-                console.log('cest ok');
-                  // si le test est false un msg d'erreur apparaît
-                  if( test == true ){
-                    console.log(` ${message} valide `)
-                    errorMsg.innerHTML = " ";
-                    }else{
-                      errorMsg.innerHTML = ` ${message} invalide `
-                    }
-              }
+              // déclarer l'objet contact
+              let contact = {};
 
-                // verif Prenom
-                firstName.addEventListener('change', () =>{
-                  console.log('firstName ok')
-                    // fonction pour stocker les test et changements
-                      checkForm(regexNames, this, firstNameErrorMsg, "Prenom")
-                });
+                // déclarer le tableau sendDataProducts
+                const sendDataProducts = [
+                  contact, 
+                  products
+                ];
 
-                // verif Nom
-                lastName.addEventListener('change', () =>{
-                  console.log('lastName ok')
-                    // fonction pour stocker les test et changements
-                      checkForm(regexNames, this, lastNameErrorMsg, "Nom")
-                });
+                  // Fonction qui permet de tester le regex et ajouter un msg d'erreur 
+                  const checkForm = function(regexTest, thisInput, errorMsg, message){
+                    // variable qui test s'il y a une correspondance entre regexName et la valeur de l'input firstName
+                    let test = regexTest.test(thisInput.value);
+                    console.log('cest ok');
+                      // si le test est false un msg d'erreur apparaît
+                      if( test == true ){
+                        console.log(` ${message} valide `)
+                        errorMsg.innerHTML = " ";
+                        }else{
+                          errorMsg.innerHTML = ` ${message} invalide `
+                        }
+                  };
 
-                // verif Prenom
-                address.addEventListener('change', () =>{
-                  console.log('address ok')
-                    // fonction pour stocker les test et changements
-                      checkForm(regexAdress, this, addressErrorMsg, "Adresse")
-                });
+                    // verif Prenom
+                    firstName.addEventListener('change', () =>{
+                      console.log('firstName ok')
+                        // fonction pour stocker les test et changements
+                          checkForm(regexNames, this, firstNameErrorMsg, "Prenom")
+                    });
 
-                // verif Prenom
-                city.addEventListener('change', () =>{
-                  console.log('city ok')
-                    // fonction pour stocker les test et changements
-                      checkForm(regexCity, this, cityErrorMsg, "Ville")
-                });
+                    // verif Nom
+                    lastName.addEventListener('change', () =>{
+                      console.log('lastName ok')
+                        // fonction pour stocker les test et changements
+                          checkForm(regexNames, this, lastNameErrorMsg, "Nom")
+                    });
 
-                // verif Prenom
-                email.addEventListener('change', () =>{
-                  console.log('email ok')
-                    // fonction pour stocker les test et changements
-                      checkForm(regexEmail, this, emailErrorMsg, "Email")
-                });
-    
+                    // verif address
+                    address.addEventListener('change', () =>{
+                      console.log('address ok')
+                        // fonction pour stocker les test et changements
+                          checkForm(regexAdress, this, addressErrorMsg, "Adresse")
+                    });
+
+                    // verif ville
+                    city.addEventListener('change', () =>{
+                      console.log('city ok')
+                        // fonction pour stocker les test et changements
+                          checkForm(regexCity, this, cityErrorMsg, "Ville")
+                    });
+
+                    // verif email
+                    email.addEventListener('change', () =>{
+                      console.log('email ok')
+                        // fonction pour stocker les test et changements
+                          checkForm(regexEmail, this, emailErrorMsg, "Email")
+                    });
+                    
+                        // au submit, envoyer les informations dans le tableau
+                        order.addEventListener('submit', (e) => {
+                          e.preventDefault();
+                          // lors de la soumission du formulaire, envoyer le tableau en localstorage
+                          contact = {
+                            firstName : firstName.value,
+                            lastName : lastName.value, 
+                            address : address.value,
+                            city : city.value, 
+                            email : email.value
+                          };
+
+                            //API
+                        })
+        
   }
 }
 // appeler toutes les functions
