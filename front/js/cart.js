@@ -160,10 +160,10 @@ const Appli = {
         let emailErrorMsg = document.getElementById("emailErrorMsg");
 
           // regex test
-          let regexNames = new RegExp("^[a-z]+[ \-']?[[a-z]+[ \-']?]*[a-z]+$", "gi");
-          let regexAdress = new RegExp('^([0-9]{5}|[a-zA-Z][a-zA-Z ]{0,49})$');
-          let regexCity = new RegExp('^[a-zA-Z.-]+(?:[\s-][\/a-zA-Z.]+)*$');
-          let regexEmail = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$', 'g');
+          let regexNames = new RegExp('^[A-Z]\\w+$','gm');;
+          let regexAdress = new RegExp("^([0-9]{5}|[a-zA-Z][a-zA-Z ]{0,49})$","gm");
+          let regexCity = new RegExp("^[a-zA-Z.-]+(?:[\s-][\/a-zA-Z.]+)*$","gm");
+          let regexEmail = /^((?!\.)[\w_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
 
           // tableaux à envoyer
               // récupérer le panier et récup les id pour les mettre dans le tableau products
@@ -179,69 +179,80 @@ const Appli = {
                   products
                 ];
 
-                  // Fonction qui permet de tester le regex et ajouter un msg d'erreur 
-                  const checkForm = function(regexTest, thisInput, errorMsg, message){
+                  const checkInput = function(regexTest, thisInput, errorMsg, message){
                     // variable qui test s'il y a une correspondance entre regexName et la valeur de l'input firstName
-                    let test = regexTest.test(thisInput.value);
-                    console.log('cest ok');
-                      // si le test est false un msg d'erreur apparaît
-                      if( test == true ){
-                        console.log(` ${message} valide `)
-                        errorMsg.innerHTML = " ";
-                        }else{
-                          errorMsg.innerHTML = ` ${message} invalide `
-                        }
+                    // si le regextest est false un msg d'erreur apparaît
+                    if(regexTest.test(thisInput.value)){
+                      console.log('cest ok');
+                      console.log(` ${message} valide `)
+                      errorMsg.innerHTML = " ";
+                      } else {
+                        errorMsg.innerHTML = ` ${message} invalide `;
+                        // s'il y a une erreur, ne pas envoyer dans le ls
+                      }
                   };
 
                     // verif Prenom
                     firstName.addEventListener('change', () =>{
                       console.log('firstName ok')
                         // fonction pour stocker les test et changements
-                          checkForm(regexNames, this, firstNameErrorMsg, "Prenom")
+                          checkInput(regexNames, this, firstNameErrorMsg, "Prenom")
                     });
 
                     // verif Nom
                     lastName.addEventListener('change', () =>{
                       console.log('lastName ok')
                         // fonction pour stocker les test et changements
-                          checkForm(regexNames, this, lastNameErrorMsg, "Nom")
+                          checkInput(regexNames, this, lastNameErrorMsg, "Nom")
                     });
 
                     // verif address
                     address.addEventListener('change', () =>{
                       console.log('address ok')
                         // fonction pour stocker les test et changements
-                          checkForm(regexAdress, this, addressErrorMsg, "Adresse")
+                          checkInput(regexAdress, this, addressErrorMsg, "Adresse")
                     });
 
                     // verif ville
                     city.addEventListener('change', () =>{
                       console.log('city ok')
                         // fonction pour stocker les test et changements
-                          checkForm(regexCity, this, cityErrorMsg, "Ville")
+                          checkInput(regexCity, this, cityErrorMsg, "Ville")
                     });
 
                     // verif email
                     email.addEventListener('change', () =>{
                       console.log('email ok')
                         // fonction pour stocker les test et changements
-                          checkForm(regexEmail, this, emailErrorMsg, "Email")
+                          checkInput(regexEmail, this, emailErrorMsg, "Email")
                     });
-                    
+                   
                         // au submit, envoyer les informations dans le tableau
-                        order.addEventListener('submit', (e) => {
+                        order.addEventListener('click', (e) => {
                           e.preventDefault();
-                          // lors de la soumission du formulaire, envoyer le tableau en localstorage
-                          contact = {
-                            firstName : firstName.value,
-                            lastName : lastName.value, 
-                            address : address.value,
-                            city : city.value, 
-                            email : email.value
-                          };
-
+                          // si tous les inputs ne sont pas rempli -> msg d'alert
+                          if( (firstName.value == " ") || (lastName.value == " ") ||  (address.value == " ") || (city.value == " ") || (email.value == " ")  ){
+                            alert("Veuillez remplir tous les champs !")
+                          }else if ((regexNames.test == false) || (regexAdress.test == false) || (regexCity.test == false) || (regexEmail.test == false)){
+                            alert('Veuillez remplir correctement tous les champs')
+                          }else{
+                              // Si l'email est pas rempli ca envoie quand meme dans le localstorage
+                            // tableau contact
+                            contact = {
+                              firstName : firstName.value,
+                              lastName : lastName.value, 
+                              address : address.value,
+                              city : city.value, 
+                              email : email.value
+                            };
+                            console.log(contact);
+                            }
+                          
+                          
                             //API
+
                         })
+                        
         
   }
 }
