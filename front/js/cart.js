@@ -160,10 +160,10 @@ const Appli = {
         let emailErrorMsg = document.getElementById("emailErrorMsg");
 
           // regex test
-          let regexNames = new RegExp('^[A-Z]\\w+$','gm');;
-          let regexAdress = new RegExp("^([0-9]{5}|[a-zA-Z][a-zA-Z ]{0,49})$","gm");
-          let regexCity = new RegExp("^[a-zA-Z.-]+(?:[\s-][\/a-zA-Z.]+)*$","gm");
-          let regexEmail = /^((?!\.)[\w_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
+          let regexNames = new RegExp("^[a-zA-Z-'.\u00C0-\u00FF]*$");;//ok
+          /* let regexAdress = new RegExp("/\d{1,}(\s{1}\w{1,})(\s{1}?\w{1,})+)/g"); */
+          let regexCity = new RegExp("/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/gi");
+          let regexEmail = new RegExp("^[0-9a-zA-Z-_\$#]+@[0-9a-zA-Z-_\$#]+\.[a-zA-Z]{2,5}","gm");//ok
 
           // tableaux à envoyer
               // récupérer le panier et récup les id pour les mettre dans le tableau products
@@ -196,35 +196,35 @@ const Appli = {
                     firstName.addEventListener('change', () =>{
                       console.log('firstName ok')
                         // fonction pour stocker les test et changements
-                          checkInput(regexNames, this, firstNameErrorMsg, "Prenom")
+                          checkInput(regexNames, firstName , firstNameErrorMsg, "Prenom")
                     });
 
                     // verif Nom
                     lastName.addEventListener('change', () =>{
                       console.log('lastName ok')
                         // fonction pour stocker les test et changements
-                          checkInput(regexNames, this, lastNameErrorMsg, "Nom")
+                          checkInput(regexNames, lastName, lastNameErrorMsg, "Nom")
                     });
 
                     // verif address
-                    address.addEventListener('change', () =>{
+                    /* address.addEventListener('change', () =>{
                       console.log('address ok')
                         // fonction pour stocker les test et changements
-                          checkInput(regexAdress, this, addressErrorMsg, "Adresse")
-                    });
+                          checkInput(regexAdress, address, addressErrorMsg, "Adresse")
+                    }); */
 
                     // verif ville
                     city.addEventListener('change', () =>{
                       console.log('city ok')
                         // fonction pour stocker les test et changements
-                          checkInput(regexCity, this, cityErrorMsg, "Ville")
+                          checkInput(regexCity, city, cityErrorMsg, "Ville")
                     });
 
                     // verif email
                     email.addEventListener('change', () =>{
                       console.log('email ok')
                         // fonction pour stocker les test et changements
-                          checkInput(regexEmail, this, emailErrorMsg, "Email")
+                          checkInput(regexEmail, email, emailErrorMsg, "Email")
                     });
                    
                         // au submit, envoyer les informations dans le tableau
