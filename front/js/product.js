@@ -126,7 +126,6 @@ const Appl = {
                     indexOfQuantity = productSelectedArray.findIndex((x => x.theQuantity == foundSameProduct.theQuantity));
                     // je met à jour la quantité du localstorage en incrementant le nombre de produit que je viens d'ajouter avec le nombre de produit qui était déjà présent
                     productSelectedArray[indexOfQuantity].theQuantity = productSelectedObject.theQuantity += parseInt(foundSameProduct.theQuantity);
-                    /* const productSelectedArray = new productSelectedArray; */
                     localStorage.setItem('allProduct', JSON.stringify(productSelectedArray)); 
                     console.log("2.2");
                     console.log('yesss', productSelectedArray);  

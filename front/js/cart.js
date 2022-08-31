@@ -1,4 +1,6 @@
 console.log('salut cart!');
+// récupérer le localstorage au début pour y avoir accès partout
+// revoir ladressregex
 const Appli = {
   init : function(){
     console.log('hey init');
@@ -137,28 +139,125 @@ const Appli = {
           totalPrice.textContent = finalPrice;
           console.log('finalPrice', finalPrice);
   },
-  
+
   formVerif : function(){
+    console.log('form existe')
     // selectionne le formulaire
     let form = document.querySelector('#loginForm');
-    // Msg d'erreurs
-    let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
-    let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
-    let addressErrorMsg = document.getElementById("addressErrorMsg");
-    let cityErrorMsg = document.getElementById("cityErrorMsg");
-    let emailErrorMsg = document.getElementById("emailErrorMsg");
+    let order = document.querySelector('#order');
 
-    // regex test
-    let regexNames = new RegExp("^[a-z]+[ \-']?[[a-z]+[ \-']?]*[a-z]+$", "gi");
-    let regexAdress = new RegExp("/\d{1,}(\s{1}\w{1,})(\s{1}?\w{1,})+)/g");
-    let regexCity = new RegExp("^[a-zA-Z.-]+(?:[\s-][\/a-zA-Z.]+)*$");
-    let regexEmail = new RegExp("^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)");
+      // Select les input
+      let firstName = document.getElementById("firstName");
+      let lastName = document.getElementById("lastName");
+      let address = document.getElementById("address");
+      let city = document.getElementById("city");
+      let email = document.getElementById("email");
 
-    // tableaux à envoyer
-    const contact = [];
-    const products = [];
+        // Msg d'erreurs
+        let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+        let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+        let addressErrorMsg = document.getElementById("addressErrorMsg");
+        let cityErrorMsg = document.getElementById("cityErrorMsg");
+        let emailErrorMsg = document.getElementById("emailErrorMsg");
 
-    
+          // regex test
+          let regexNames = new RegExp("^[a-zA-Z-'.\u00C0-\u00FF]*$");;//ok
+          /* let regexAdress = new RegExp("/\d{1,}(\s{1}\w{1,})(\s{1}?\w{1,})+)/g"); */
+          let regexCity = new RegExp("^[a-zA-Z\x80-ɏ]+(?:([ -']|(. ))[a-zA-Z\x80-ɏ]+)*$");
+          let regexEmail = new RegExp("^[0-9a-zA-Z-_\$#]+@[0-9a-zA-Z-_\$#]+\.[a-zA-Z]{2,5}","gm");//ok
+
+          // tableaux à envoyer
+              // récupérer le panier et récup les id pour les mettre dans le tableau products
+              const productsCart = JSON.parse(localStorage.getItem('allProduct'));
+              const products = productsCart.map(({theId})=> theId);
+
+              // déclarer l'objet contact
+              let contact = {};
+
+                // déclarer le tableau sendDataProducts
+                const sendDataProducts = [
+                  contact, 
+                  products
+                ];
+
+                  const checkInput = function(regexTest, thisInput, errorMsg, message){
+                    // variable qui test s'il y a une correspondance entre regexName et la valeur de l'input firstName
+                    // si le regextest est false un msg d'erreur apparaît
+                    if(regexTest.test(thisInput.value)){
+                      console.log(` ${message} valide `)
+                      errorMsg.innerHTML = " ";
+                      } else {
+                        errorMsg.innerHTML = ` ${message} invalide `;
+                        // s'il y a une erreur, ne pas envoyer dans le ls
+                      }
+                  };
+
+                    // verif Prenom
+                    firstName.addEventListener('change', () =>{
+                      console.log('firstName ok')
+                        // fonction pour stocker les test et changements
+                          checkInput(regexNames, firstName , firstNameErrorMsg, "Prenom")
+                    });
+
+                    // verif Nom
+                    lastName.addEventListener('change', () =>{
+                      console.log('lastName ok')
+                        // fonction pour stocker les test et changements
+                          checkInput(regexNames, lastName, lastNameErrorMsg, "Nom")
+                    });
+
+                    // verif address
+                    /* address.addEventListener('change', () =>{
+                      console.log('address ok')
+                        // fonction pour stocker les test et changements
+                          checkInput(regexAdress, address, addressErrorMsg, "Adresse")
+                    }); */
+
+                    // verif ville
+                    city.addEventListener('change', () =>{
+                      console.log('city ok')
+                        // fonction pour stocker les test et changements
+                          checkInput(regexCity, city, cityErrorMsg, "Ville")
+                    });
+
+                    // verif email
+                    email.addEventListener('change', () =>{
+                      console.log('email ok')
+                        // fonction pour stocker les test et changements
+                          checkInput(regexEmail, email, emailErrorMsg, "Email")
+                    });
+                   
+                      // au submit, envoyer les informations dans le tableau
+                      order.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        // si tous les inputs ne sont pas rempli -> msg d'alert
+                        if((firstName.value == " ") || (lastName.value == " ") || (address.value == " ") || (city.value == " ") || (email.value == " ")){
+                          alert("Veuillez remplir tous les champs !")
+
+                          }else{
+                            // si le regex est false -> alertmsg
+                            if ((regexNames.test(firstName.value) == false) || (regexNames.test(lastName.value) == false) || (regexCity.test(city.value) == false) || (regexEmail.test(email.value) == false)){
+                              alert('Veuillez remplir correctement tous les champs')
+
+                              }else{
+                              // sinon envoyer le tableau contact
+                              contact = {
+                                firstName : firstName.value,
+                                lastName : lastName.value, 
+                                address : address.value,
+                                city : city.value, 
+                                email : email.value
+                              };
+                              console.log(contact);
+                                
+                            }
+                        
+                        
+                          //API
+
+                          }
+                      })
+        
   }
 }
 // appeler toutes les functions
