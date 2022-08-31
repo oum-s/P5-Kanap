@@ -1,5 +1,6 @@
 console.log('salut cart!');
 // récupérer le localstorage au début pour y avoir accès partout
+// revoir ladressregex
 const Appli = {
   init : function(){
     console.log('hey init');
@@ -162,7 +163,7 @@ const Appli = {
           // regex test
           let regexNames = new RegExp("^[a-zA-Z-'.\u00C0-\u00FF]*$");;//ok
           /* let regexAdress = new RegExp("/\d{1,}(\s{1}\w{1,})(\s{1}?\w{1,})+)/g"); */
-          let regexCity = new RegExp("/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/gi");
+          let regexCity = new RegExp("^[a-zA-Z\x80-ɏ]+(?:([ -']|(. ))[a-zA-Z\x80-ɏ]+)*$");
           let regexEmail = new RegExp("^[0-9a-zA-Z-_\$#]+@[0-9a-zA-Z-_\$#]+\.[a-zA-Z]{2,5}","gm");//ok
 
           // tableaux à envoyer
@@ -183,7 +184,6 @@ const Appli = {
                     // variable qui test s'il y a une correspondance entre regexName et la valeur de l'input firstName
                     // si le regextest est false un msg d'erreur apparaît
                     if(regexTest.test(thisInput.value)){
-                      console.log('cest ok');
                       console.log(` ${message} valide `)
                       errorMsg.innerHTML = " ";
                       } else {
@@ -227,32 +227,36 @@ const Appli = {
                           checkInput(regexEmail, email, emailErrorMsg, "Email")
                     });
                    
-                        // au submit, envoyer les informations dans le tableau
-                        order.addEventListener('click', (e) => {
-                          e.preventDefault();
-                          // si tous les inputs ne sont pas rempli -> msg d'alert
-                          if( (firstName.value == " ") || (lastName.value == " ") ||  (address.value == " ") || (city.value == " ") || (email.value == " ")  ){
-                            alert("Veuillez remplir tous les champs !")
-                          }else if ((regexNames.test == false) || (regexAdress.test == false) || (regexCity.test == false) || (regexEmail.test == false)){
-                            alert('Veuillez remplir correctement tous les champs')
-                          }else{
-                              // Si l'email est pas rempli ca envoie quand meme dans le localstorage
-                            // tableau contact
-                            contact = {
-                              firstName : firstName.value,
-                              lastName : lastName.value, 
-                              address : address.value,
-                              city : city.value, 
-                              email : email.value
-                            };
-                            console.log(contact);
-                            }
-                          
-                          
-                            //API
+                      // au submit, envoyer les informations dans le tableau
+                      order.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        // si tous les inputs ne sont pas rempli -> msg d'alert
+                        if((firstName.value == " ") || (lastName.value == " ") || (address.value == " ") || (city.value == " ") || (email.value == " ")){
+                          alert("Veuillez remplir tous les champs !")
 
-                        })
+                          }else{
+                            // si le regex est false -> alertmsg
+                            if ((regexNames.test(firstName.value) == false) || (regexNames.test(lastName.value) == false) || (regexCity.test(city.value) == false) || (regexEmail.test(email.value) == false)){
+                              alert('Veuillez remplir correctement tous les champs')
+
+                              }else{
+                              // sinon envoyer le tableau contact
+                              contact = {
+                                firstName : firstName.value,
+                                lastName : lastName.value, 
+                                address : address.value,
+                                city : city.value, 
+                                email : email.value
+                              };
+                              console.log(contact);
+                                
+                            }
                         
+                        
+                          //API
+
+                          }
+                      })
         
   }
 }
