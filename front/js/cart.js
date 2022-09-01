@@ -228,7 +228,7 @@ const Appli = {
                     });
                    
                       // au submit, envoyer les informations dans le tableau
-                      order.addEventListener('click', (e) => {
+                      order.addEventListener('submit', (e) => {
                         e.preventDefault();
                         // si tous les inputs ne sont pas rempli -> msg d'alert
                         if((firstName.value == " ") || (lastName.value == " ") || (address.value == " ") || (city.value == " ") || (email.value == " ")){
@@ -248,9 +248,31 @@ const Appli = {
                                 city : city.value, 
                                 email : email.value
                               };
-                              console.log(contact);
+                              /* console.log(contact);
+                              const options = {
+                                method: 'POST',
+                                body: JSON.stringify(sendFormData),
+                                headers: { 
+                                  'Content-Type': 'application/json',
+                                }
+                              };
+                              fetch("http://localhost:3000/api/products/order",options)
+                                .then(function(res) {
+                                  // vérifie que la requête s’est bien passée
+                                  if(res.ok) {
+                                  //Récupère le résultat de la requête au format json 
+                                    return res.json();
+                                  }
+                                })
+                                .then(data => {
+                                  localStorage.setItem('orderId', data.orderId);
+                                    if (validControl()) {
+                                      document.location.href = 'confirmation.html?id='+ data.orderId;
+                                    }
+                                }); */
+                              }
                                 
-                            }
+                               
                         
                         
                           //API
