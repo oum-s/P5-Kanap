@@ -290,7 +290,7 @@ const Appli = {
                                     .then(function(data) {
                                       // stock les données orderId (element contenu dans la reponse)
                                       localStorage.setItem('orderId', data.orderId);
-                                      // pour récupérer l'url de la page qui s'affichera
+                                      // pour rediriger la page vers la page de confirmation 
                                       window.location.href = `confirmation.html?id=${data.orderId}`;
                                     })
                                       .catch((err) => {
