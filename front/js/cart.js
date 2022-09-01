@@ -162,9 +162,9 @@ const Appli = {
 
           // regex test
           let regexNames = new RegExp("^[a-zA-Z-'.\u00C0-\u00FF]*$");;//ok
-          /* let regexAdress = new RegExp("/\d{1,}(\s{1}\w{1,})(\s{1}?\w{1,})+)/g"); */
+          let regexAdress = new RegExp("\b\d{1,8}(-)?[a-z]?\W[a-z|\W|\.]{1,}\W(allée|allee|avenue|boulevard|rue|place|lane|way|rd\.|st\.|dr\.|ave\.|blvd\.|cir\.|ln\.|rd|dr|ave|blvd|cir|ln)?|\d");
           let regexCity = new RegExp("^[a-zA-Z\x80-ɏ]+(?:([ -']|(. ))[a-zA-Z\x80-ɏ]+)*$");
-          let regexEmail = new RegExp("^[0-9a-zA-Z-_\$#]+@[0-9a-zA-Z-_\$#]+\.[a-zA-Z]{2,5}","gm");//ok
+          let regexEmail = new RegExp("^([a-zA-Z0-9.]{2,})+@([a-zA-Z0-9.]{2,})+[.]+([a-zA-Z0-9-]{2,20})$");//ok
 
           // tableaux à envoyer
               // récupérer le panier et récup les id pour les mettre dans le tableau products
@@ -180,105 +180,91 @@ const Appli = {
                   products
                 ];
 
-                  const checkInput = function(regexTest, thisInput, errorMsg, message){
-                    // variable qui test s'il y a une correspondance entre regexName et la valeur de l'input firstName
-                    // si le regextest est false un msg d'erreur apparaît
-                    if(regexTest.test(thisInput.value)){
-                      console.log(` ${message} valide `)
-                      errorMsg.innerHTML = " ";
-                      } else {
-                        errorMsg.innerHTML = ` ${message} invalide `;
-                        // s'il y a une erreur, ne pas envoyer dans le ls
-                      }
-                  };
+                function checkFirstName() {
+                  const isFirstNameValid = regexNames.test(firstName.value);
+                  if (isFirstNameValid == true) {
+                    console.log("Prénom valide")
+                    firstNameErrorMsg.innerHTML = " ";
+                      console.log('firstName ok');
+                  } else {
+                      console.log('firstName bad');
+                      firstNameErrorMsg.innerHTML = "Prénom invalide ";
+                  }
+                  return isFirstNameValid;
+                }
 
-                    // verif Prenom
-                    firstName.addEventListener('change', () =>{
-                      console.log('firstName ok')
-                        // fonction pour stocker les test et changements
-                          checkInput(regexNames, firstName , firstNameErrorMsg, "Prenom")
-                    });
+                function checkLastName() {
+                  const islastNameValid = regexNames.test(lastName.value);
+                  if (islastNameValid == true) {
+                    console.log("Prénom valide")
+                    lastNameErrorMsg.innerHTML = " ";
+                      console.log('lastName ok');
+                  } else {
+                      console.log('lastName bad');
+                      lastNameErrorMsg.innerHTML = "Prénom invalide ";
+                  }
+                  return islastNameValid;
+                }
 
-                    // verif Nom
-                    lastName.addEventListener('change', () =>{
-                      console.log('lastName ok')
-                        // fonction pour stocker les test et changements
-                          checkInput(regexNames, lastName, lastNameErrorMsg, "Nom")
-                    });
+                function checkAddress() {
+                  const isAddressValid = regexAdress.test(address.value);
+                  if (isAddressValid == true) {
+                    console.log("Prénom valide")
+                    addressErrorMsg.innerHTML = " ";
+                      console.log('address ok');
+                  } else {
+                      console.log('address bad');
+                      addressErrorMsg.innerHTML = "Prénom invalide ";
+                  }
+                  return isAddressValid;
+                }
 
-                    // verif address
-                    /* address.addEventListener('change', () =>{
-                      console.log('address ok')
-                        // fonction pour stocker les test et changements
-                          checkInput(regexAdress, address, addressErrorMsg, "Adresse")
-                    }); */
+                function checkCity() {
+                  const isCityValid = regexCity.test(city.value);
+                  if (isCityValid == true) {
+                    console.log("Prénom valide")
+                    cityErrorMsg.innerHTML = " ";
+                      console.log('City ok');
+                  } else {
+                      console.log('City bad');
+                      cityErrorMsg.innerHTML = "Prénom invalide ";
+                  }
+                  return isCityValid;
+                }
 
-                    // verif ville
-                    city.addEventListener('change', () =>{
-                      console.log('city ok')
-                        // fonction pour stocker les test et changements
-                          checkInput(regexCity, city, cityErrorMsg, "Ville")
-                    });
+                function checkEmail() {
+                  const isEmailValid = regexEmail.test(email.value);
+                  if (isEmailValid == true) {
+                    console.log("Prénom valide")
+                    emailErrorMsg.innerHTML = " ";
+                      console.log('Email ok');
+                  } else {
+                      console.log('Email bad');
+                      emailErrorMsg.innerHTML = "Prénom invalide ";
+                  }
+                  return isEmailValid;
+                }
 
-                    // verif email
-                    email.addEventListener('change', () =>{
-                      console.log('email ok')
-                        // fonction pour stocker les test et changements
-                          checkInput(regexEmail, email, emailErrorMsg, "Email")
-                    });
-                   
-                      // au submit, envoyer les informations dans le tableau
-                      order.addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        // si tous les inputs ne sont pas rempli -> msg d'alert
-                        if((firstName.value == " ") || (lastName.value == " ") || (address.value == " ") || (city.value == " ") || (email.value == " ")){
-                          alert("Veuillez remplir tous les champs !")
+                  order.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    // constante qui retourne les function si elles sont valides
+                    const isFormValid = checkFirstName() && checkLastName() && checkEmail() && checkCity() && checkAddress();
+                
+                    checkFirstName();
+                    checkLastName();
+                    checkEmail();
+                    checkAddress();
+                    checkCity();
+                
+                    if (isFormValid) {
+                        console.log('form OK');
+                    } else {
+                        console.log('No valid form !');
+                        alert("Veuillez remplir correctement le formulaire.")
+                    }
 
-                          }else{
-                            // si le regex est false -> alertmsg
-                            if ((regexNames.test(firstName.value) == false) || (regexNames.test(lastName.value) == false) || (regexCity.test(city.value) == false) || (regexEmail.test(email.value) == false)){
-                              alert('Veuillez remplir correctement tous les champs')
-
-                              }else{
-                              // sinon envoyer le tableau contact
-                              contact = {
-                                firstName : firstName.value,
-                                lastName : lastName.value, 
-                                address : address.value,
-                                city : city.value, 
-                                email : email.value
-                              };
-                              /* console.log(contact);
-                              const options = {
-                                method: 'POST',
-                                body: JSON.stringify(sendFormData),
-                                headers: { 
-                                  'Content-Type': 'application/json',
-                                }
-                              };
-                              fetch("http://localhost:3000/api/products/order",options)
-                                .then(function(res) {
-                                  // vérifie que la requête s’est bien passée
-                                  if(res.ok) {
-                                  //Récupère le résultat de la requête au format json 
-                                    return res.json();
-                                  }
-                                })
-                                .then(data => {
-                                  localStorage.setItem('orderId', data.orderId);
-                                    if (validControl()) {
-                                      document.location.href = 'confirmation.html?id='+ data.orderId;
-                                    }
-                                }); */
-                              }
-                                
-                               
-                        
-                        
-                          //API
-
-                          }
-                      })
+                    
+                  });
         
   }
 }
