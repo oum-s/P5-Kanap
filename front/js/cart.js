@@ -169,16 +169,15 @@ const Appli = {
           // tableaux à envoyer
               // récupérer le panier et récup les id pour les mettre dans le tableau products
               const productsCart = JSON.parse(localStorage.getItem('allProduct'));
-              const products = productsCart.map(({theId})=> theId);
+              const productsId = productsCart.map(({theId})=> theId);
 
-              // déclarer l'objet contact
+              /* // déclarer l'objet contact
               let contact = {};
 
                 // déclarer le tableau sendDataProducts
                 const sendDataProducts = [
-                  contact, 
                   products
-                ];
+                ]; */
 
                 function checkFirstName() {
                   const isFirstNameValid = regexNames.test(firstName.value);
@@ -238,33 +237,73 @@ const Appli = {
                     console.log("Prénom valide")
                     emailErrorMsg.innerHTML = " ";
                       console.log('Email ok');
-                  } else {
-                      console.log('Email bad');
-                      emailErrorMsg.innerHTML = "Prénom invalide ";
-                  }
-                  return isEmailValid;
+                    } else {
+                        console.log('Email bad');
+                        emailErrorMsg.innerHTML = "Prénom invalide ";
+                    }
+                      return isEmailValid;
                 }
 
-                  order.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    // constante qui retourne les function si elles sont valides
-                    const isFormValid = checkFirstName() && checkLastName() && checkEmail() && checkCity() && checkAddress();
-                
-                    checkFirstName();
-                    checkLastName();
-                    checkEmail();
-                    checkAddress();
-                    checkCity();
-                
-                    if (isFormValid) {
-                        console.log('form OK');
-                    } else {
-                        console.log('No valid form !');
-                        alert("Veuillez remplir correctement le formulaire.")
-                    }
-
+                      order.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        // constante qui retourne les function si elles sont valides
+                        const isFormValid = checkFirstName() && checkLastName() && checkAddress() && checkCity() && checkEmail();
+                        const isValueInputValid = firstName.value && lastName.value && address.value && city.value && email.value;
                     
-                  });
+                        checkFirstName();
+                        checkLastName();
+                        checkAddress();
+                        checkCity();
+                        checkEmail();
+                    
+                        if(isValueInputValid){
+                          if (isFormValid) {
+                            console.log('form OK');
+                            const sendDataProducts = {
+                              contact : {
+                                firstName : firstName.value,
+                                lastName : lastName.value,
+                                address : address.value,
+                                city : city.value,
+                                email : email.value,
+                              },
+                              products : productsId,
+                            };
+                            console.log(sendDataProducts);
+                              const options = {
+                                method: 'POST',
+                                body: JSON.stringify(sendDataProducts),
+                                headers: { 
+                                  'Content-Type': 'application/json',
+                                }
+                              };
+                                
+                                fetch("http://localhost:3000/api/products/order",options)
+                                  .then(function(res) {
+                                    // vérifie que la requête s’est bien passée
+                                    if(res.ok) {
+                                    //Récupère le résultat de la requête au format json 
+                                      return res.json();
+                                    }
+                                  })
+                                    .then(function(data) {
+                                      localStorage.setItem('orderId', data.orderId);
+                                      window.location.href = `confirmation.html?id=${data.orderId}`;
+                                    })
+                                      .catch((err) => {
+                                        alert ("Problème avec fetch ");
+                                      });
+                              } else {
+                                  console.log('No valid form !');
+                                  alert("Veuillez remplir correctement le formulaire.")
+                              }
+
+                            } else {
+                              alert("Veuillez remplir toutes les cases du formulaire.")
+                            }
+
+                        
+                      });
         
   }
 }
