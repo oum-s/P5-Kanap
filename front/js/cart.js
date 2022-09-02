@@ -1,6 +1,4 @@
 console.log('salut cart!');
-// récupérer le localstorage au début pour y avoir accès partout
-// revoir ladressregex
 const Appli = {
   init : function(){
     console.log('hey init');
@@ -10,7 +8,7 @@ const Appli = {
     Appli.deleteProduct();
     Appli.formVerif();
   },
-
+  // récupération de tous les produits de l'api
   fetchProducts : function(){
     return(
       fetch(`http://localhost:3000/api/products`)
@@ -31,7 +29,7 @@ const Appli = {
       })
     );
   },
-
+  // affichage des produits 
   displayCart : function(){
     let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
     localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage));
@@ -39,21 +37,23 @@ const Appli = {
     const templateCartElt = document.querySelector('.templateCart');
     // on duplique chaque produit venant du localstorage pour l'insérer dans cart_item 
     productArrayInLocalStorage.forEach(oneProduct => {
+
       const cloneTemplateCartElt = document.importNode(templateCartElt.content, true);
       const cartEltContent = cloneTemplateCartElt.querySelector('article');
-      cartEltContent.setAttribute('data-id', oneProduct.theId);
-      cartEltContent.setAttribute('data-color', oneProduct.theColor);
-      cartEltContent.querySelector('img').src = oneProduct.theImage;
-      // cartEltContent.querySelector('img').alt = product.altTxt;
-      cartEltContent.querySelector('.cart__item__content__description h2').textContent = oneProduct.theName;
-      cartEltContent.querySelector('.cart__item__content__description p').textContent = oneProduct.theColor;
-      cartEltContent.querySelector('.thePrice').textContent = oneProduct.thePrice;
-      cartEltContent.querySelector('.itemQuantity').value = oneProduct.theQuantity;
-        // ajoute le tout à son parent
-        document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
+
+        cartEltContent.setAttribute('data-id', oneProduct.theId);
+        cartEltContent.setAttribute('data-color', oneProduct.theColor);
+        cartEltContent.querySelector('img').src = oneProduct.theImage;
+        // cartEltContent.querySelector('img').alt = product.altTxt;
+        cartEltContent.querySelector('.cart__item__content__description h2').textContent = oneProduct.theName;
+        cartEltContent.querySelector('.cart__item__content__description p').textContent = oneProduct.theColor;
+        cartEltContent.querySelector('.thePrice').textContent = oneProduct.thePrice;
+        cartEltContent.querySelector('.itemQuantity').value = oneProduct.theQuantity;
+          // ajoute le tout à son parent
+          document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
     });
   },
-
+  // modification de la quantité
   updateProduct : function(){
     // select tous les input quantity
     const updateItems = document.querySelectorAll('.itemQuantity')
@@ -79,7 +79,7 @@ const Appli = {
       })
     })
   }, 
-
+  // suppression d'un produit
   deleteProduct : function(){
     const deleteItems = document.querySelectorAll('.deleteItem')
     let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
@@ -102,7 +102,7 @@ const Appli = {
       })
     })
   },
-
+  //affichage de la somme total des produits
   resultProducts : function(products){
     // on recupère les info du localstorage pour utiliser la quantité
     let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
@@ -143,7 +143,6 @@ const Appli = {
   formVerif : function(){
     console.log('form existe')
     // selectionne le formulaire
-    let form = document.querySelector('#loginForm');
     let order = document.querySelector('#order');
 
       // Select les input
@@ -166,147 +165,138 @@ const Appli = {
           let regexCity = new RegExp("^[a-zA-Z\x80-ɏ]+(?:([ -']|(. ))[a-zA-Z\x80-ɏ]+)*$");
           let regexEmail = new RegExp("^([a-zA-Z0-9.]{2,})+@([a-zA-Z0-9.]{2,})+[.]+([a-zA-Z0-9-]{2,20})$");//ok
 
-          // tableaux à envoyer
-              // récupérer le panier et récup les id pour les mettre dans le tableau products
-              const productsCart = JSON.parse(localStorage.getItem('allProduct'));
-              const productsId = productsCart.map(({theId})=> theId);
+            // récupérer le panier et récup les id pour les mettre dans le tableau products
+            const productsCart = JSON.parse(localStorage.getItem('allProduct'));
+            const productsId = productsCart.map(({theId})=> theId);
 
-              /* // déclarer l'objet contact
-              let contact = {};
+              function checkFirstName() {
+                const isFirstNameValid = regexNames.test(firstName.value);
+                if (isFirstNameValid == true) {
+                  console.log("Prénom valide")
+                  firstNameErrorMsg.innerHTML = " ";
+                    console.log('firstName ok');
+                } else {
+                    console.log('firstName bad');
+                    firstNameErrorMsg.innerHTML = "Prénom invalide ";
+                }
+                return isFirstNameValid;
+              }
 
-                // déclarer le tableau sendDataProducts
-                const sendDataProducts = [
-                  products
-                ]; */
+              function checkLastName() {
+                const islastNameValid = regexNames.test(lastName.value);
+                if (islastNameValid == true) {
+                  console.log("Prénom valide")
+                  lastNameErrorMsg.innerHTML = " ";
+                    console.log('lastName ok');
+                } else {
+                    console.log('lastName bad');
+                    lastNameErrorMsg.innerHTML = "Prénom invalide ";
+                }
+                return islastNameValid;
+              }
 
-                function checkFirstName() {
-                  const isFirstNameValid = regexNames.test(firstName.value);
-                  if (isFirstNameValid == true) {
-                    console.log("Prénom valide")
-                    firstNameErrorMsg.innerHTML = " ";
-                      console.log('firstName ok');
+              function checkAddress() {
+                const isAddressValid = regexAdress.test(address.value);
+                if (isAddressValid == true) {
+                  console.log("Prénom valide")
+                  addressErrorMsg.innerHTML = " ";
+                    console.log('address ok');
+                } else {
+                    console.log('address bad');
+                    addressErrorMsg.innerHTML = "Prénom invalide ";
+                }
+                return isAddressValid;
+              }
+
+              function checkCity() {
+                const isCityValid = regexCity.test(city.value);
+                if (isCityValid == true) {
+                  console.log("Prénom valide")
+                  cityErrorMsg.innerHTML = " ";
+                    console.log('City ok');
+                } else {
+                    console.log('City bad');
+                    cityErrorMsg.innerHTML = "Prénom invalide ";
+                }
+                return isCityValid;
+              }
+
+              function checkEmail() {
+                const isEmailValid = regexEmail.test(email.value);
+                if (isEmailValid == true) {
+                  console.log("Prénom valide")
+                  emailErrorMsg.innerHTML = " ";
+                    console.log('Email ok');
                   } else {
-                      console.log('firstName bad');
-                      firstNameErrorMsg.innerHTML = "Prénom invalide ";
+                      console.log('Email bad');
+                      emailErrorMsg.innerHTML = "Prénom invalide ";
                   }
-                  return isFirstNameValid;
-                }
+                    return isEmailValid;
+              }
 
-                function checkLastName() {
-                  const islastNameValid = regexNames.test(lastName.value);
-                  if (islastNameValid == true) {
-                    console.log("Prénom valide")
-                    lastNameErrorMsg.innerHTML = " ";
-                      console.log('lastName ok');
-                  } else {
-                      console.log('lastName bad');
-                      lastNameErrorMsg.innerHTML = "Prénom invalide ";
-                  }
-                  return islastNameValid;
-                }
+                order.addEventListener('click', function (e) {
+                  e.preventDefault();
+                  // constante qui retourne les function si elles sont valides
+                  const isFormValid = checkFirstName() && checkLastName() && checkAddress() && checkCity() && checkEmail();
+                  const isValueInputValid = firstName.value && lastName.value && address.value && city.value && email.value;
+              
+                  checkFirstName();
+                  checkLastName();
+                  checkAddress();
+                  checkCity();
+                  checkEmail();
+              
+                  if(isValueInputValid == true ){
+                    if (isFormValid == true) {
+                      
+                      const sendDataProducts = {
+                        contact : {
+                          firstName : firstName.value,
+                          lastName : lastName.value,
+                          address : address.value,
+                          city : city.value,
+                          email : email.value,
+                        },
+                        products : productsId,
+                      };
 
-                function checkAddress() {
-                  const isAddressValid = regexAdress.test(address.value);
-                  if (isAddressValid == true) {
-                    console.log("Prénom valide")
-                    addressErrorMsg.innerHTML = " ";
-                      console.log('address ok');
-                  } else {
-                      console.log('address bad');
-                      addressErrorMsg.innerHTML = "Prénom invalide ";
-                  }
-                  return isAddressValid;
-                }
-
-                function checkCity() {
-                  const isCityValid = regexCity.test(city.value);
-                  if (isCityValid == true) {
-                    console.log("Prénom valide")
-                    cityErrorMsg.innerHTML = " ";
-                      console.log('City ok');
-                  } else {
-                      console.log('City bad');
-                      cityErrorMsg.innerHTML = "Prénom invalide ";
-                  }
-                  return isCityValid;
-                }
-
-                function checkEmail() {
-                  const isEmailValid = regexEmail.test(email.value);
-                  if (isEmailValid == true) {
-                    console.log("Prénom valide")
-                    emailErrorMsg.innerHTML = " ";
-                      console.log('Email ok');
-                    } else {
-                        console.log('Email bad');
-                        emailErrorMsg.innerHTML = "Prénom invalide ";
-                    }
-                      return isEmailValid;
-                }
-
-                      order.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        // constante qui retourne les function si elles sont valides
-                        const isFormValid = checkFirstName() && checkLastName() && checkAddress() && checkCity() && checkEmail();
-                        const isValueInputValid = firstName.value && lastName.value && address.value && city.value && email.value;
-                    
-                        checkFirstName();
-                        checkLastName();
-                        checkAddress();
-                        checkCity();
-                        checkEmail();
-                    
-                        if(isValueInputValid){
-                          if (isFormValid) {
-                            console.log('form OK');
-                            const sendDataProducts = {
-                              contact : {
-                                firstName : firstName.value,
-                                lastName : lastName.value,
-                                address : address.value,
-                                city : city.value,
-                                email : email.value,
-                              },
-                              products : productsId,
-                            };
-                            console.log(sendDataProducts);
-                              const options = {
-                                method: 'POST',
-                                body: JSON.stringify(sendDataProducts),
-                                headers: { 
-                                  'Content-Type': 'application/json',
-                                }
-                              };
-                                
-                                fetch("http://localhost:3000/api/products/order",options)
-                                  .then(function(res) {
-                                    // vérifie que la requête s’est bien passée
-                                    if(res.ok) {
-                                    //Récupère le résultat de la requête au format json 
-                                      return res.json();
-                                    }
-                                  })
-                                    //data = res.json 
-                                    .then(function(data) {
-                                      // stock les données orderId (element contenu dans la reponse)
-                                      localStorage.setItem('orderId', data.orderId);
-                                      // pour rediriger la page vers la page de confirmation 
-                                      window.location.href = `confirmation.html?id=${data.orderId}`;
-                                    })
-                                      .catch((err) => {
-                                        alert ("Problème avec fetch ");
-                                      });
-                              } else {
-                                  console.log('No valid form !');
-                                  alert("Veuillez remplir correctement le formulaire.")
+                        const options = {
+                          method: 'POST',
+                          body: JSON.stringify(sendDataProducts),
+                          headers: { 
+                            'Content-Type': 'application/json',
+                          }
+                        };
+                          
+                          fetch("http://localhost:3000/api/products/order",options)
+                            .then(function(res) {
+                              // vérifie que la requête s’est bien passée
+                              if(res.ok) {
+                              //Récupère le résultat de la requête au format json 
+                                return res.json();
                               }
+                            })
+                              //data = res.json 
+                              .then(function(data) {
+                                // stock les données orderId (element contenu dans la reponse)
+                                localStorage.setItem('orderId', data.orderId);
+                                // pour rediriger la page vers la page de confirmation 
+                                window.location.href = `confirmation.html?id=${data.orderId}`;
+                              })
+                                .catch((err) => {
+                                  alert ("Problème avec fetch ");
+                                });
+                        } else {
+                            console.log('No valid form !');
+                            alert("Veuillez remplir correctement le formulaire.")
+                        }
 
-                            } else {
-                              alert("Veuillez remplir toutes les cases du formulaire.")
-                            }
+                      } else {
+                        alert("Veuillez remplir toutes les cases du formulaire.")
+                      }
 
-                        
-                      });
+                  
+                });
         
   }
 }
