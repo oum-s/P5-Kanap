@@ -63,17 +63,19 @@ const Appl = {
     const urlSearchParams = new URLSearchParams(urlId);
     let button = document.querySelector('#addToCart');
     const selectColor = document.getElementById('colors');
+    console.log(selectColor);
     const quantityInput = document.querySelector('#quantity');
     const theSelect = selectColor.value;
     let productSelectedArray = JSON.parse(localStorage.getItem('allProduct'));
+    console.log(productSelectedArray)
       // tableau des produits qui seront dans le local storage
-      if (productSelectedArray == null){
-        productSelectedArray = [];
-      } 
-
+      if (productSelectedArray == null) {
+        productSelectedArray = []
+      }; 
+    
         // foreach pour récupérer l'id de l'url et selectionner les éléments de l'api pour le tableau
         products.forEach(product => {
-
+          // si l'id qui est dans l'url == id ds l'API
           if( urlSearchParams.get('id') === product._id){
             console.log('ok panier');
 
@@ -81,55 +83,58 @@ const Appl = {
             button.addEventListener("click", (e) => {
               e.preventDefault();
               // liste des elements qui s'afficheront dans le panier
-              productSelectedObject = {
-                theId : product._id, 
-                theImage : product.imageUrl,
-                theName : product.name,
-                /* thePrice : parseInt(product.price), */
-                theColor : selectColor.value,
-                theQuantity : parseInt(quantityInput.value)          
-              };          
-              // if else pour empêcher le client d'envoyer un produit vide
-                if (selectColor.value  == false && quantityInput.value == 0 ) {
-                  confirm("Veuillez sélectionner une couleur et le nombre d'articles souhaités");
-                }else if (selectColor.value == false) {
-                  confirm("Veuillez sélectionner une couleur");
-                } else if (quantityInput.value == 0) {
-                  confirm("Veuillez sélectionner le nombre d'articles souhaités");
-                } else {
-                  /* alert("Votre article a bien été ajouté au panier"); */
-                  console.log("Votre article a bien été ajouté au panier"); 
-                  //si le tableau est vide on met l'objet dans le tableau et on l'envoie dans le localstorage
-                    if(productSelectedArray.length === 0){
-
-                      localStorage.setItem('product', JSON.stringify(productSelectedObject));
-                      productSelectedArray.push(productSelectedObject);
-                      localStorage.setItem('allProduct', JSON.stringify(productSelectedArray));
-                      console.log("1");  
-
-                    }else{
-                      // Selectionner l'objet dont l’id correspond à un autre id et la même couleur présent dans le panier 
-                      /* let productLocalStorage = JSON.parse(localStorage.getItem('product')); */
-                      foundSameProduct = productSelectedArray.find(p => p.theId === productSelectedObject.theId && p.theColor === productSelectedObject.theColor);
-                      console.log('array', productSelectedArray);
-                      console.log("2");
-                      if (foundSameProduct == undefined) {
+                productSelectedObject = {
+                  theId : product._id, 
+                  theImage : product.imageUrl,
+                  theName : product.name,
+                  theColor : selectColor.value,
+                  theQuantity : parseInt(quantityInput.value)          
+                };          
+                // if else pour empêcher le client d'envoyer un produit vide
+                  if (selectColor.value  == false && quantityInput.value == 0 ) {
+                    confirm("Veuillez sélectionner une couleur et le nombre d'articles souhaités");
+                  }else if (selectColor.value == false) {
+                    confirm("Veuillez sélectionner une couleur");
+                  } else if (quantityInput.value == 0) {
+                    confirm("Veuillez sélectionner le nombre d'articles souhaités");
+                  } else {
+                    /* alert("Votre article a bien été ajouté au panier"); */
+                    console.log("Votre article a bien été ajouté au panier"); 
+                    //si le tableau est vide on met l'objet dans le tableau et on l'envoie dans le localstorage
+                      if(productSelectedArray.length === 0){
+                        // on met à jour un localstorage 'product' pour un seul produit avec l'objet
                         localStorage.setItem('product', JSON.stringify(productSelectedObject));
+                        // pusher l'objet dans le tableau productSelectedArray
                         productSelectedArray.push(productSelectedObject);
-                        localStorage.setItem('allProduct', JSON.stringify(productSelectedArray));
-                        console.log("2.1");
-                        
-                      }else{
-                        localStorage.setItem('product', JSON.stringify(productSelectedObject));
-                        indexOfQuantity = productSelectedArray.findIndex((x => x.theQuantity == foundSameProduct.theQuantity));
-                        // je met à jour la quantité du localstorage en incrementant le nombre de produit que je viens d'ajouter avec le nombre de produit qui était déjà présent
-                        productSelectedArray[indexOfQuantity].theQuantity = productSelectedObject.theQuantity += parseInt(foundSameProduct.theQuantity);
-                        localStorage.setItem('allProduct', JSON.stringify(productSelectedArray)); 
-                        console.log("2.2");
-                        console.log('yesss', productSelectedArray);  
-                      } 
-                    }   
-                }   
+                        // enregistrer le tableau en localstorage
+                          localStorage.setItem('allProduct', JSON.stringify(productSelectedArray));
+                          console.log(productSelectedArray)
+                          console.log("1");  
+
+                        }else{
+                          // Selectionner l'objet dont l’id correspond à un autre id et la même couleur présent dans le panier
+                          foundSameProduct = productSelectedArray.find(p => p.theId === productSelectedObject.theId && p.theColor === productSelectedObject.theColor);
+                          console.log('array', productSelectedArray);
+                          console.log("2");
+                            if (foundSameProduct == undefined) {
+                              localStorage.setItem('product', JSON.stringify(productSelectedObject));
+                              productSelectedArray.push(productSelectedObject);
+
+                                localStorage.setItem('allProduct', JSON.stringify(productSelectedArray));
+                                console.log(productSelectedArray)
+                                console.log("2.1");
+                                
+                              }else{
+                                localStorage.setItem('product', JSON.stringify(productSelectedObject));
+                                indexOfQuantity = productSelectedArray.findIndex((x => x.theQuantity == foundSameProduct.theQuantity));
+                                // je met à jour la quantité du localstorage en incrementant le nombre de produit que je viens d'ajouter avec le nombre de produit qui était déjà présent
+                                productSelectedArray[indexOfQuantity].theQuantity = productSelectedObject.theQuantity += parseInt(foundSameProduct.theQuantity);
+                                localStorage.setItem('allProduct', JSON.stringify(productSelectedArray)); 
+                                console.log("2.2");
+                                console.log('yesss', productSelectedArray);  
+                              } 
+                        }   
+                  }   
                 
             });
                   
