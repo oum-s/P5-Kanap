@@ -39,7 +39,7 @@ const Appli = {
     productArrayInLocalStorage.forEach(oneProduct => {
 
       const cloneTemplateCartElt = document.importNode(templateCartElt.content, true);
-      const cartEltContent = cloneTemplateCartElt.querySelector('article');
+      let cartEltContent = cloneTemplateCartElt.querySelector('article');
 
         cartEltContent.setAttribute('data-id', oneProduct.theId);
         cartEltContent.setAttribute('data-color', oneProduct.theColor);
@@ -52,6 +52,7 @@ const Appli = {
           // ajoute le tout à son parent
           document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
     });
+    // return cartEltContent;
   },
   // modification de la quantité
   updateProduct : function(){
@@ -97,10 +98,12 @@ const Appli = {
 
               // si l'article a le meme id et couleur que dans un findId/couleur de productArrayInLocalStorage = mettre à jour le ls sans le produit cliqué
               productArrayInLocalStorage = productArrayInLocalStorage.filter(product => product != productToDelete);
+              article.remove();
               localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
               console.log('produittodelete',productToDelete);
               console.log('ls', productArrayInLocalStorage);
-        })
+        });
+        
       })
   },
   //affichage de la somme total des produits
@@ -191,7 +194,7 @@ const Appli = {
                     console.log('lastName ok');
                 } else {
                     console.log('lastName bad');
-                    lastNameErrorMsg.innerHTML = "Prénom invalide ";
+                    lastNameErrorMsg.innerHTML = "Nom invalide ";
                 }
                 return islastNameValid;
               }
@@ -199,12 +202,12 @@ const Appli = {
               function checkAddress() {
                 const isAddressValid = regexAdress.test(address.value);
                 if (isAddressValid == true) {
-                  console.log("Prénom valide")
+                  console.log("Adresse valide")
                   addressErrorMsg.innerHTML = " ";
                     console.log('address ok');
                 } else {
                     console.log('address bad');
-                    addressErrorMsg.innerHTML = "Prénom invalide ";
+                    addressErrorMsg.innerHTML = "Adresse invalide ";
                 }
                 return isAddressValid;
               }
@@ -212,12 +215,12 @@ const Appli = {
               function checkCity() {
                 const isCityValid = regexCity.test(city.value);
                 if (isCityValid == true) {
-                  console.log("Prénom valide")
+                  console.log("Ville valide")
                   cityErrorMsg.innerHTML = " ";
                     console.log('City ok');
                 } else {
                     console.log('City bad');
-                    cityErrorMsg.innerHTML = "Prénom invalide ";
+                    cityErrorMsg.innerHTML = "Ville invalide ";
                 }
                 return isCityValid;
               }
@@ -225,12 +228,12 @@ const Appli = {
               function checkEmail() {
                 const isEmailValid = regexEmail.test(email.value);
                 if (isEmailValid == true) {
-                  console.log("Prénom valide")
+                  console.log("Email valide")
                   emailErrorMsg.innerHTML = " ";
                     console.log('Email ok');
                   } else {
                       console.log('Email bad');
-                      emailErrorMsg.innerHTML = "Prénom invalide ";
+                      emailErrorMsg.innerHTML = "Email invalide ";
                   }
                     return isEmailValid;
               }
@@ -239,8 +242,9 @@ const Appli = {
                   e.preventDefault();
                   // constante qui retourne les function si elles sont valides
                   const isFormValid = checkFirstName() && checkLastName() && checkAddress() && checkCity() && checkEmail();
-                  const isValueInputValid = firstName.value && lastName.value && address.value && city.value && email.value;
-              
+                  const isValueInputValid = (firstName.value.length) && (lastName.value.length) && (address.value.length) && (city.value.length) && (email.value.length) != 0 ;
+                  console.log("inputvalid",isValueInputValid)
+                  console.log('value', isValueInputValid)
                   checkFirstName();
                   checkLastName();
                   checkAddress();
