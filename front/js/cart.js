@@ -81,26 +81,27 @@ const Appli = {
   }, 
   // suppression d'un produit
   deleteProduct : function(){
+    // récupère le paragraphe "supprimer"
     const deleteItems = document.querySelectorAll('.deleteItem')
+    // récup produits du ls
     let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
+      // appliquer la fonction pour chaque delete -> au click sur l'un des articles, supprimer l'élément correspendant au data-id et data-color du target
+      deleteItems.forEach(item => {
+        item.addEventListener('click', event => {
+          const article = event.target.closest('article');
+          const thisId = article.getAttribute('data-id');
+          const thisColor = article.getAttribute('data-color');
 
-    deleteItems.forEach(item => {
-      item.addEventListener('click', event => {
-        const article = event.target.closest('article');
-        const thisId = article.getAttribute('data-id');
-        const thisColor = article.getAttribute('data-color');
-        console.log(productArrayInLocalStorage);
+          // selectionner l'élément qui correspond au produit cliqué dans le localstorage (même id et même couleur)
+            productToDelete = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
 
-          // si l'article a le meme id et couleur que dans un findId/couleur de productArrayInLocalStorage = supprimer le found
-          // l'objet a été récupéré
-          productToDelete = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
-          
-            productArrayInLocalStorage.pop(productToDelete) ;
-            localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
-            console.log(productToDelete);
-            console.log(productArrayInLocalStorage);
+              // si l'article a le meme id et couleur que dans un findId/couleur de productArrayInLocalStorage = mettre à jour le ls sans le produit cliqué
+              productArrayInLocalStorage = productArrayInLocalStorage.filter(product => product != productToDelete);
+              localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
+              console.log('produittodelete',productToDelete);
+              console.log('ls', productArrayInLocalStorage);
+        })
       })
-    })
   },
   //affichage de la somme total des produits
   resultProducts : function(products){
