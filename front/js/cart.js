@@ -35,6 +35,7 @@ const Appli = {
     localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage));
     // on duplique la div cart
     const templateCartElt = document.querySelector('.templateCart');
+    console.log(productArrayInLocalStorage);
     // on duplique chaque produit venant du localstorage pour l'insérer dans cart_item 
     productArrayInLocalStorage.forEach(oneProduct => {
 
@@ -44,7 +45,7 @@ const Appli = {
         cartEltContent.setAttribute('data-id', oneProduct.theId);
         cartEltContent.setAttribute('data-color', oneProduct.theColor);
         cartEltContent.querySelector('img').src = oneProduct.theImage;
-        // cartEltContent.querySelector('img').alt = product.altTxt;
+        cartEltContent.querySelector('img').alt = oneProduct.altTxt;
         cartEltContent.querySelector('.cart__item__content__description h2').textContent = oneProduct.theName;
         cartEltContent.querySelector('.cart__item__content__description p').textContent = oneProduct.theColor;
         cartEltContent.querySelector('.thePrice').textContent = oneProduct.thePrice;
@@ -70,13 +71,15 @@ const Appli = {
         const thisId = article.getAttribute('data-id');
         const thisColor = article.getAttribute('data-color');
 
-          // find l'objet du tableau == article en question
+          // trouve le produit du tableau == produit en question
           productToUpdate = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
             // met à jour la valeur de la quantité de l'objet qui correspond
             productToUpdate.theQuantity = item.value;
               // met à jour le localstorage
               localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
               console.log(productArrayInLocalStorage);
+              localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
+                window.location.href = "cart.html";
       })
     })
   }, 
@@ -102,12 +105,15 @@ const Appli = {
               localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
               console.log('produittodelete',productToDelete);
               console.log('ls', productArrayInLocalStorage);
+              localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
+                window.location.href = "cart.html";
         });
         
       })
   },
   //affichage de la somme total des produits
   resultProducts : function(products){
+
     // on recupère les info du localstorage pour utiliser la quantité
     let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
     let finalPrice = 0;
@@ -117,7 +123,6 @@ const Appli = {
       productArrayInLocalStorage.forEach(theProduct => {
       // foreach des produits de l'api
         products.forEach(product => {
-        
           if ( product._id == theProduct.theId ){
           console.log('good');
           // renvoyer un entier pour les prix et les quantités
@@ -130,6 +135,8 @@ const Appli = {
                 finalPrice += sum;
                 // a chaque foreach on ajoute à totalProduct la quantité d'un produit
                 totalProducts += quantityOfOneProduct ;
+                localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage));
+
           };
         });
       });
