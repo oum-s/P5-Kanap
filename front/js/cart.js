@@ -1,14 +1,16 @@
 console.log('salut cart!');
 const Appli = {
+  // init va appeler toutes les fonctions dont j'ai besoin
   init : function(){
     console.log('hey init');
-    Appli.fetchProducts();
-    Appli.displayCart();
-    Appli.updateProduct();
-    Appli.deleteProduct();
-    Appli.formVerif();
+      // fonction de l'api
+      Appli.fetchProducts();
+      // fonction qui s'occupe de l'affichage
+      Appli.displayCart();
+      // fonction qui vérifie le formulaire
+      Appli.formVerif();
   },
-  // récupération de tous les produits de l'api
+  // récupération de tous les produits de l'api et appelle des fonctions qui auront besoin de l'api
   fetchProducts : function(){
     return(
       fetch(`http://localhost:3000/api/products`)
@@ -22,6 +24,8 @@ const Appli = {
       .then(function(products) {
         //  nous le retournons et récupérons sa vraie valeur
         console.log('ca marche');
+        Appli.deleteProduct(products);
+        Appli.updateProduct(products);
         Appli.resultProducts(products);
       })
       .catch(function(err) {
@@ -33,58 +37,58 @@ const Appli = {
   displayCart : function(){
     let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
     localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage));
-    // on duplique la div cart
-    const templateCartElt = document.querySelector('.templateCart');
-    console.log(productArrayInLocalStorage);
-    // on duplique chaque produit venant du localstorage pour l'insérer dans cart_item 
-    productArrayInLocalStorage.forEach(oneProduct => {
+      // on duplique la div cart
+      const templateCartElt = document.querySelector('.templateCart');
+      console.log(productArrayInLocalStorage);
+      // on duplique chaque produit venant du localstorage pour l'insérer dans cart_item 
+      productArrayInLocalStorage.forEach(oneProduct => {
 
-      const cloneTemplateCartElt = document.importNode(templateCartElt.content, true);
-      let cartEltContent = cloneTemplateCartElt.querySelector('article');
+        const cloneTemplateCartElt = document.importNode(templateCartElt.content, true);
+        let cartEltContent = cloneTemplateCartElt.querySelector('article');
 
-        cartEltContent.setAttribute('data-id', oneProduct.theId);
-        cartEltContent.setAttribute('data-color', oneProduct.theColor);
-        cartEltContent.querySelector('img').src = oneProduct.theImage;
-        cartEltContent.querySelector('img').alt = oneProduct.altTxt;
-        cartEltContent.querySelector('.cart__item__content__description h2').textContent = oneProduct.theName;
-        cartEltContent.querySelector('.cart__item__content__description p').textContent = oneProduct.theColor;
-        cartEltContent.querySelector('.thePrice').textContent = oneProduct.thePrice;
-        cartEltContent.querySelector('.itemQuantity').value = oneProduct.theQuantity;
-          // ajoute le tout à son parent
-          document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
-    });
+          cartEltContent.setAttribute('data-id', oneProduct.theId);
+          cartEltContent.setAttribute('data-color', oneProduct.theColor);
+          cartEltContent.querySelector('img').src = oneProduct.theImage;
+          cartEltContent.querySelector('img').alt = oneProduct.altTxt;
+          cartEltContent.querySelector('.cart__item__content__description h2').textContent = oneProduct.theName;
+          cartEltContent.querySelector('.cart__item__content__description p').textContent = oneProduct.theColor;
+          cartEltContent.querySelector('.thePrice').textContent = oneProduct.thePrice;
+          cartEltContent.querySelector('.itemQuantity').value = oneProduct.theQuantity;
+            // ajoute le tout à son parent
+            document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
+      });
     // return cartEltContent;
   },
   // modification de la quantité
-  updateProduct : function(){
+  updateProduct : function(products){
     // select tous les input quantity
     const updateItems = document.querySelectorAll('.itemQuantity')
     // recup le tableau du localstorage
     let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
 
-    // pour chaque input, quand la valeur change on la modifie dans le tableau (si id/color de l'article selectionné == id/color d'un objet du tableau -> changer l'objet du tableau)
-    updateItems.forEach(item => {
-      item.addEventListener('change', event => {
-        // vise la balise article la plus proche de l'élément cliqué
-        const article = event.target.closest('article');
-        // attrape attribut/couleur de l'article en question
-        const thisId = article.getAttribute('data-id');
-        const thisColor = article.getAttribute('data-color');
+      // pour chaque input, quand la valeur change on la modifie dans le tableau (si id/color de l'article selectionné == id/color d'un produit du tableau -> changer la quantité du produit dans le tableau)
+      updateItems.forEach(item => {
+        item.addEventListener('change', event => {
+          // vise la balise article la plus proche de l'élément cliqué
+          const article = event.target.closest('article');
+          // attrape attribut/couleur de l'article en question
+          const thisId = article.getAttribute('data-id');
+          const thisColor = article.getAttribute('data-color');
 
-          // trouve le produit du tableau == produit en question
-          productToUpdate = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
-            // met à jour la valeur de la quantité de l'objet qui correspond
-            productToUpdate.theQuantity = item.value;
-              // met à jour le localstorage
-              localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
-              console.log(productArrayInLocalStorage);
-              localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
-                window.location.href = "cart.html";
+            // trouve le produit du tableau == produit en question
+            productToUpdate = productArrayInLocalStorage.find(x => x.theId == thisId && x.theColor == thisColor );
+              // met à jour la valeur de la quantité de l'objet qui correspond
+              productToUpdate.theQuantity = item.value;
+                // met à jour le localstorage
+                localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage));
+                // mettre à jour l'affichage du résultat
+                Appli.resultProducts(products);
+        });
+        
       })
-    })
   }, 
   // suppression d'un produit
-  deleteProduct : function(){
+  deleteProduct : function(products){
     // récupère le paragraphe "supprimer"
     const deleteItems = document.querySelectorAll('.deleteItem')
     // récup produits du ls
@@ -105,8 +109,8 @@ const Appli = {
               localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
               console.log('produittodelete',productToDelete);
               console.log('ls', productArrayInLocalStorage);
-              localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage)); 
-                window.location.href = "cart.html";
+                // mettre à jour l'affichage du résultat
+                Appli.resultProducts(products);
         });
         
       })
@@ -116,39 +120,44 @@ const Appli = {
 
     // on recupère les info du localstorage pour utiliser la quantité
     let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
-    let finalPrice = 0;
-    let sum = 0;
-    let totalProducts = 0;
-      // foreach chaque produit du ls
-      productArrayInLocalStorage.forEach(theProduct => {
-      // foreach des produits de l'api
-        products.forEach(product => {
-          if ( product._id == theProduct.theId ){
-          console.log('good');
-          // renvoyer un entier pour les prix et les quantités
-            let productPrice = parseInt(product.price);
-            let quantityOfOneProduct = parseInt(theProduct.theQuantity);
-              // calcul : prixDuProduit * quantitéDuProduit
-                sum = productPrice * quantityOfOneProduct;
-                console.log('sum is:', sum);
-                // à chaque foreach, j'ajoute la somme du prix du produit trouvé à la somme total
-                finalPrice += sum;
-                // a chaque foreach on ajoute à totalProduct la quantité d'un produit
-                totalProducts += quantityOfOneProduct ;
-                localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage));
+    console.log('recup ls dans result', productArrayInLocalStorage);
+      let finalPrice = 0;
+      let sum = 0;
+      let totalProducts = 0;
+        // foreach chaque produit du ls
+        productArrayInLocalStorage.forEach(theProduct => {
+            productIdOfAPI = products.find(x => x._id == theProduct.theId);
+              /* products.forEach(product => { */
+                if ( productIdOfAPI._id == theProduct.theId  ){
+                  console.log('good, produitAPI=ProduitLS');
+                  // renvoyer un entier pour les prix et les quantités
+                    let productPrice = parseInt(productIdOfAPI.price);
+                    console.log('prix du produit',productPrice);
+                    let quantityOfOneProduct = parseInt(theProduct.theQuantity);
+                    console.log('quantité d1 produit', quantityOfOneProduct);
+                      // calcul : prixDuProduit * quantitéDuProduit
+                        sum = productPrice * quantityOfOneProduct;
+                        console.log("somme de la quantité*prix:", sum);
+                          // à chaque foreach, j'ajoute la somme du prix du produit trouvé à la somme total
+                          finalPrice += sum;
+                          console.log("ajout du prix trouvé à la somme total:",finalPrice)
+                            // a chaque foreach on ajoute à totalProduct la quantité d'un produit
+                            totalProducts += quantityOfOneProduct ;
+                            console.log("quantité total:", totalProducts);
+                            localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage));
 
-          };
+                };
         });
-      });
-        // affichage de la quantité d'article dans le panier
-        const totalQuantity = document.querySelector('#totalQuantity');
-        totalQuantity.textContent = totalProducts;
-        console.log('totalProducts', totalProducts);
-        console.log('total', finalPrice);
-          // affichage du prix final/total
-          let totalPrice = document.getElementById('totalPrice');
-          totalPrice.textContent = finalPrice;
-          console.log('finalPrice', finalPrice);
+          // affichage de la quantité d'article dans le panier
+          const totalQuantity = document.querySelector('#totalQuantity');
+          totalQuantity.textContent = totalProducts;
+          console.log('totalProducts', totalProducts);
+          console.log('total', finalPrice);
+            // affichage du prix final/total
+            let totalPrice = document.getElementById('totalPrice');
+            totalPrice.textContent = finalPrice;
+            console.log('finalPrice', finalPrice);
+            
   },
 
   formVerif : function(){
