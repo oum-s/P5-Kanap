@@ -35,25 +35,33 @@ const Appli = {
     let productArrayInLocalStorage = JSON.parse(localStorage.getItem('allProduct'));
     localStorage.setItem('allProduct', JSON.stringify(productArrayInLocalStorage));
       // on duplique la div cart
-      const templateCartElt = document.querySelector('.templateCart');
+      const cartItems = document.querySelector('#cart__items');
       // on duplique chaque produit venant du localstorage pour l'insérer dans cart_item 
       productArrayInLocalStorage.forEach(oneProduct => {
-
-        const cloneTemplateCartElt = document.importNode(templateCartElt.content, true);
-        let cartEltContent = cloneTemplateCartElt.querySelector('article');
-
-          cartEltContent.setAttribute('data-id', oneProduct.theId);
-          cartEltContent.setAttribute('data-color', oneProduct.theColor);
-          cartEltContent.querySelector('img').src = oneProduct.theImage;
-          cartEltContent.querySelector('img').alt = oneProduct.altTxt;
-          cartEltContent.querySelector('.cart__item__content__description h2').textContent = oneProduct.theName;
-          cartEltContent.querySelector('.cart__item__content__description p').textContent = oneProduct.theColor;
-          cartEltContent.querySelector('.thePrice').textContent = oneProduct.thePrice;
-          cartEltContent.querySelector('.itemQuantity').value = oneProduct.theQuantity;
-            // ajoute le tout à son parent
-            document.querySelector('#cart__items').appendChild(cloneTemplateCartElt);
+        cartItems.innerHTML += `
+          <article class="cart__item" data-id="${oneProduct.theId}" data-color="${oneProduct.theColor}">
+                  <div class="cart__item__img">
+                    <img src="${oneProduct.theImage}" alt="${oneProduct.altTxt}">
+                  </div>
+                  <div class="cart__item__content">
+                    <div class="cart__item__content__description">
+                      <h2>${oneProduct.theName}</h2>
+                      <p>${oneProduct.theColor}</p>
+                      <p>${oneProduct.thePrice}</p>
+                    </div>
+                    <div class="cart__item__content__settings">
+                      <div class="cart__item__content__settings__quantity">
+                        <p>Qté : </p>
+                        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${oneProduct.theQuantity}">
+                      </div>
+                      <div class="cart__item__content__settings__delete">
+                        <p class="deleteItem">Supprimer</p>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+        `
       });
-    // return cartEltContent;
   },
   // modification de la quantité
   updateProduct : function(products){
