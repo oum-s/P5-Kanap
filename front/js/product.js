@@ -35,22 +35,21 @@ const Appl = {
         // on récupère un seul id avec ses valeurs correspondantes
         // si l'id de l'url correspond à l'id de l'API, faire l'affichage
         if( urlSearchParams.get('id') === product._id){
-
-              const image = document.querySelector('.item__img');
-              const title = document.querySelector('#title');
-              const price = document.querySelector('#price');
-              const description = document.querySelector('#description');
-              const colors = document.querySelector('#colors');
-
-                image.innerHTML +=`
-                <img src="${product.imageUrl}" alt="${product.altTxt}">
-                `;
-                title.innerHTML +=`${product.title}`;
-                price.innerHTML +=`${product.price}`;
-                description.innerHTML +=`${product.description}`;
-                colors.innerHTML +=`<option value="vert">vert</option>
-                                    <option value="blanc">blanc</option>`
-            }else{
+          // selectionne la template
+          const templateOneProductElt = document.querySelector('#templateOneProduct');
+          // clone la template
+          const cloneTemplateOneProductElt = document.importNode(templateOneProductElt.content, true) ;
+          // Met le contenue de la template ds balise article
+          const oneProducteltContent = cloneTemplateOneProductElt.querySelector('article');
+            // seectionne l'img de l'article et lui rajoute la valeur de l'api
+            oneProducteltContent.querySelector('img').src = product.imageUrl;
+            oneProducteltContent.querySelector('img').alt = product.altTxt;
+            oneProducteltContent.querySelector('h1').textContent = product.name;
+            oneProducteltContent.querySelector('#description').textContent = product.description;
+            oneProducteltContent.querySelector('#price').textContent = product.price;
+              // ajoute le tout à son parent
+              document.querySelector('.item').appendChild(cloneTemplateOneProductElt);
+        }else{
           console.log('erreur');
         }
       }

@@ -26,19 +26,21 @@ const App = {
   },
 // Affichage de tous les produits
   displayProducts : function(products) {
-    const itemProducts = document.getElementById('items');
     // on va chercher chaque produits avec leurs valeurs correspondantes
     products.forEach(product => {
-      
-        itemProducts.innerHTML +=`
-           <a href="./product.html?id=${product._id}" id="product_link">  
-             <article> 
-               <img src=${product.imageUrl} alt=${product.altTxt}> 
-                 <h3 class="productName">${product.name}</h3> 
-                 <p class="productDescription">${product.description}</p> 
-             </article> 
-           </a> 
-        `
+      const templateElt = document.querySelector('#templateProducts');
+        // clone la template
+        const cloneTemplateElt = document.importNode(templateElt.content, true) ;
+          // Met le contenue de la template ds balise link
+          const eltContent = cloneTemplateElt.querySelector('a');
+            // seectionne l'img de l'article et lui rajoute la valeur de l'api
+            eltContent.querySelector('img').src = product.imageUrl;
+            eltContent.querySelector('img').alt = product.altTxt;
+            eltContent.querySelector('h3').textContent = product.name;
+            eltContent.querySelector('p').textContent = product.description;
+            eltContent.href = "./product.html?id=" + product._id;
+            // ajoute le tout à son parent section
+              document.querySelector('.items').appendChild(cloneTemplateElt);
     });
   },
 }
