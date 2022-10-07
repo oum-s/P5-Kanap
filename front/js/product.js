@@ -1,11 +1,17 @@
 const Appl = {
   init : function(){
-    Appl.getOneProduct();    
+    // récup l'url de la page actuel
+    const urlId = window.location.search;
+    // utilisation de URLSearchParams pour avoir plus de fonctionnalité sur l'url
+    const urlSearchParams = new URLSearchParams(urlId);
+    const productId = urlSearchParams.get("id");
+    Appl.getOneProduct(productId);    
   },
   // Afficher l'API
-  getOneProduct : function(){
+  getOneProduct : function(productId){
+    console.log(productId)
     return(
-      fetch(`http://localhost:3000/api/products`)
+      fetch(`http://localhost:3000/api/products/${productId}`)
       .then(function(res) {
         // vérifie que la requête s’est bien passée
         if(res.ok) {
@@ -13,11 +19,11 @@ const Appl = {
           return res.json();
         }
       })
-        .then(function(products) {
+        .then(function(product) {
           //  nous le retournons et récupérons sa vraie valeur
           console.log('ca marche');
-          Appl.displayOneProduct(products);
-          Appl.addProductCart(products);
+          Appl.displayOneProduct(product, productId);
+          Appl.addProductCart(product, productId);
         })
           .catch(function(err) {
             console.log(err);
@@ -25,16 +31,16 @@ const Appl = {
     );
   },
   // Affichage de tous les produits
-  displayOneProduct : function(products){
-    // récup l'url de la page actuel
+  displayOneProduct : function(product, productId){
+    /* // récup l'url de la page actuel
     const urlId = window.location.search;
     // utilisation de URLSearchParams pour avoir plus de fonctionnalité sur l'url
-    const urlSearchParams = new URLSearchParams(urlId);
+    const urlSearchParams = new URLSearchParams(urlId); */
       // on va chercher chaque produits avec leurs valeurs correspondantes
-      products.forEach(product => {
+      /* products.forEach(product => { */
         // on récupère un seul id avec ses valeurs correspondantes
         // si l'id de l'url correspond à l'id de l'API, faire l'affichage
-        if( urlSearchParams.get('id') === product._id){
+        if (productId === product._id){
           // selectionne la template
           const templateOneProductElt = document.querySelector('#templateOneProduct');
           // clone la template
@@ -52,14 +58,12 @@ const Appl = {
         }else{
           console.log('erreur');
         }
-      }
-      );
+      /* }
+      ); */
   },
   // ajout d'un produit au panier
-  addProductCart : function(products){
+  addProductCart : function(product, productId){
     // selectionner les éléments nécessaires
-    const urlId = window.location.search;
-    const urlSearchParams = new URLSearchParams(urlId);
       let button = document.querySelector('#addToCart');
       const selectColor = document.getElementById('colors');
       const quantityInput = document.querySelector('#quantity');
@@ -69,10 +73,9 @@ const Appl = {
           if (productSelectedArray == null){
             productSelectedArray = [];
           } 
-            // foreach pour récupérer l'id de l'url et selectionner les éléments de l'api pour le tableau
-            products.forEach(product => {
+          
 
-              if( urlSearchParams.get('id') === product._id){
+              if(productId === product._id){
 
                 // au clic on envoie les produits selectionnés dans le localstorage
                 button.addEventListener("click", (e) => {
@@ -127,7 +130,6 @@ const Appl = {
               }else{
                 console.log('no panier')
               };
-            });
   }
 // fin fonction Appl
 }
